@@ -1,5 +1,7 @@
 # Brain: Stolarnia Dąb
 
+**Byłeś na wystąpieniu?** Zacznij od [PODSUMOWANIE.md](PODSUMOWANIE.md): przeczytaj albo daj je swojemu agentowi.
+
 Prototyp aplikacji sprzedażowej dla fikcyjnej stolarni z Krakowa. Powstał na wystąpienie „Context Based Development” na #ilovemkt 2026 w Poznaniu.
 
 Bazą są zwykłe pliki JSON w katalogu `data/`. Ekran w przeglądarce i agent AI (Claude Code, Codex) pracują na tych samych plikach. Agent zmienia plik, a ekran pokazuje zmianę w niecałą sekundę: rekord miga i pojawia się krótki komunikat.

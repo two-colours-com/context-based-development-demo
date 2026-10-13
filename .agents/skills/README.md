@@ -7,7 +7,7 @@ Siedem skilli prowadzi zmianę w aplikacji Brain od pomysłu do merge. Ty opisuj
 | Skill | Co robi | Co powstaje |
 |---|---|---|
 | `/grill` | dopytuje o zmianę, po jednym pytaniu z rekomendacją | `CONTEXT.md`, `doc/decisions/NNNN-*.md` |
-| `/plan-zmiany` | pisze plan zmiany językiem produktu | `doc/plans/<slug>/plan.md`, wpis w `doc/backlog.md` |
+| `/plan-inicjatyw` | pisze plan zmiany w aplikacji albo nowej inicjatywy, językiem produktu | `doc/plans/<slug>/plan.md`, wpis w `doc/backlog.md` |
 | `/code-manager` | prowadzi cały cykl, sam nie pisze kodu | gałąź `feat/<slug>`, briefy, commit i merge |
 | `/bramka` | testy automatyczne i checklista do klikania | `doc/bramki/YYYY-MM-DD-<slug>.md` |
 | `/critical-code-review` | przegląd kodu przez świeżego agenta | `doc/code-reviews/YYYY-MM-DD-<slug>.md` |
@@ -19,7 +19,7 @@ Siedem skilli prowadzi zmianę w aplikacji Brain od pomysłu do merge. Ty opisuj
 ```
 pomysł
   → /grill                  pytania, odpowiedzi, słownik
-  → /plan-zmiany            plan zmiany
+  → /plan-inicjatyw         plan zmiany albo inicjatywy
   → STOP 1                  zatwierdzasz plan
   → wykonawca               kod, testy i kronika na gałęzi feat/<slug>
   → /bramka                 testy automatyczne, potem Twoja checklista
@@ -42,13 +42,13 @@ Trzymamy kopię zamiast skrótu (symlinku), bo skróty źle działają na Window
 macOS / Linux:
 
 ```bash
-for s in grill plan-zmiany code-manager bramka critical-code-review kronikarz handoff; do cp -R ".agents/skills/$s" .claude/skills/; done
+for s in grill plan-inicjatyw code-manager bramka critical-code-review kronikarz handoff; do cp -R ".agents/skills/$s" .claude/skills/; done
 ```
 
 Windows (PowerShell):
 
 ```powershell
-"grill","plan-zmiany","code-manager","bramka","critical-code-review","kronikarz","handoff" | ForEach-Object { Copy-Item -Recurse -Force ".agents/skills/$_" ".claude/skills/" }
+"grill","plan-inicjatyw","code-manager","bramka","critical-code-review","kronikarz","handoff" | ForEach-Object { Copy-Item -Recurse -Force ".agents/skills/$_" ".claude/skills/" }
 ```
 
 ## Instalacja globalna
@@ -62,7 +62,7 @@ macOS / Linux:
 
 ```bash
 mkdir -p ~/.claude/skills ~/.agents/skills
-for s in grill plan-zmiany code-manager bramka critical-code-review kronikarz handoff; do
+for s in grill plan-inicjatyw code-manager bramka critical-code-review kronikarz handoff; do
   cp -R ".agents/skills/$s" ~/.claude/skills/
   cp -R ".agents/skills/$s" ~/.agents/skills/
 done
@@ -74,17 +74,17 @@ Masz już skille o tych samych nazwach, np. `grill` z innego zestawu? Zostaw jed
 
 Ścieżki w skillach (`data/`, `node --test`, `node server.mjs`) pasują do tej aplikacji. W innym projekcie opisz swoje komendy i foldery w `AGENTS.md`, a skille się do nich dostosują.
 
-## Dlaczego `plan-zmiany`, a nie `plan`
+## Dlaczego `plan-inicjatyw`, a nie `plan`
 
-Claude Code ma wbudowaną komendę `/plan` (tryb planowania). Żeby się nie gryzły, skill nazywa się `plan-zmiany`.
+Claude Code ma wbudowaną komendę `/plan` (tryb planowania). Żeby się nie gryzły, skill nazywa się `plan-inicjatyw`. Do 2026-10-13 nazywał się `plan-zmiany`, ale planuje też nowe inicjatywy, nie tylko zmiany w aplikacji.
 
 ## Pliki, które powstają w projekcie
 
 ```
 CONTEXT.md                               słownik firmy (grill)
 doc/decisions/NNNN-<opis>.md             ważne decyzje (grill)
-doc/plans/<slug>/plan.md                 plan zmiany (plan-zmiany)
-doc/backlog.md                           lista zadań (plan-zmiany, kronikarz)
+doc/plans/<slug>/plan.md                 plan zmiany albo inicjatywy (plan-inicjatyw)
+doc/backlog.md                           lista zadań (plan-inicjatyw, kronikarz)
 doc/history/YYYY-MM-DD-<slug>.md         kronika zmiany (kronikarz)
 doc/bramki/YYYY-MM-DD-<slug>.md          checklista testów (bramka)
 doc/code-reviews/YYYY-MM-DD-<slug>.md    raport przeglądu (critical-code-review)
@@ -93,4 +93,4 @@ doc/session/session.md                   notatka sesji, poza gitem (handoff)
 
 ---
 
-**Pochodzenie i licencja.** Skill `grill` i część skilla `plan-zmiany` to adaptacje skilli z repozytorium [mattpocock/skills](https://github.com/mattpocock/skills), udostępnionych na licencji MIT (Copyright (c) Matt Pocock, [treść licencji](https://github.com/mattpocock/skills/blob/main/LICENSE)). Pozostałe skille to uproszczona wersja metodologii Code Manager. Wszystkie skille w tym folderze możesz używać, zmieniać i udostępniać na licencji MIT.
+**Pochodzenie i licencja.** Skill `grill` i część skilla `plan-inicjatyw` to adaptacje skilli z repozytorium [mattpocock/skills](https://github.com/mattpocock/skills), udostępnionych na licencji MIT (Copyright (c) Matt Pocock, [treść licencji](https://github.com/mattpocock/skills/blob/main/LICENSE)). Pozostałe skille to uproszczona wersja metodologii Code Manager. Wszystkie skille w tym folderze możesz używać, zmieniać i udostępniać na licencji MIT.
