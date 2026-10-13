@@ -98,7 +98,7 @@ Zanim napiszesz kod, odpisz w 3-5 punktach, jak chcesz to zrobić.
 
 Na koniec oddaj raport:
 - każde kryterium „działa, jeśli…” i test, który je sprawdza,
-- wynik `node --test tests/`,
+- wynik `node --test`,
 - odchylenia od planu i ich powód,
 - link do kroniki `doc/history/<data>-<slug>.md`.
 ```
@@ -109,7 +109,7 @@ Dołącz je do briefu albo wskaż tę sekcję.
 
 - Trzymaj się planu. Pomysł spoza zakresu zgłoś w raporcie, nie wdrażaj go.
 - Nie zmieniaj danych scenariusza w `data/` bez potrzeby. Nowe pliki tylko te z „Modelu danych”.
-- Na każde kryterium „działa, jeśli…” napisz test w `tests/` (`node --test tests/`). Test ma paść, gdy funkcja nie działa.
+- Na każde kryterium „działa, jeśli…” napisz test w `tests/` (`node --test`). Test ma paść, gdy funkcja nie działa.
 - Pliki JSON zapisuj atomowo: najpierw plik tymczasowy, potem zamiana nazwy.
 - Nie dodawaj bibliotek bez zgody.
 - Prowadź kronikę na bieżąco (`/kronikarz`): decyzje, odrzucone warianty, pułapki.

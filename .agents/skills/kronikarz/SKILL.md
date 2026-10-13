@@ -39,7 +39,7 @@ Ustalone w `/grill`. Powód: „Na dziś” ma być krótką listą rzeczy z ter
 ## Jak testować
 1. Organizacje → 002 → widzisz projekt 002.1.
 2. Na dziś → zadanie z dzisiejszą datą jest na liście, zadanie bez daty nie.
-Automat: `node --test tests/`.
+Automat: `node --test`.
 
 ## Wynik bramki i przeglądu
 - Bramka: [2026-10-28-projekty-klienta](../bramki/2026-10-28-projekty-klienta.md), działa 5 z 5, 1 uwaga na później.

@@ -20,7 +20,7 @@ Bramka ma dwie części. Automat sprawdza to, co da się sprawdzić bez człowie
    - każdy plik w `data/` jest poprawnym JSON-em,
    - odwołania prowadzą do istniejących rekordów (np. `"organizacja": "002"` w projekcie → istnieje `data/organizacje/002.json`, `uzytkownik` w zadaniu → jest w `data/uzytkownicy.json`),
    - daty mają format `RRRR-MM-DD`.
-4. Uruchom `node --test tests/`.
+4. Uruchom `node --test`.
 5. Czerwony test wraca do wykonawcy z nazwą testu i komunikatem. Do użytkownika idziesz dopiero przy samych zielonych.
 
 Przejrzyj najważniejsze testy. Dobry test sprawdza konkretny wynik, np. że zadanie bez daty **nie** pojawia się w „Na dziś”. Test, który sprawdza tylko, że „nic się nie wysypało”, przejdzie także na błędnym kodzie.
@@ -34,7 +34,7 @@ Zapisz `doc/bramki/YYYY-MM-DD-<slug>.md`. Jeden plik na zmianę. Kolejne etapy i
 
 ## Etap 1: Projekty widoczne w organizacji (2026-10-28)
 
-Automat: `node --test tests/` → 12 z 12 zielone.
+Automat: `node --test` → 12 z 12 zielone.
 
 Jak uruchomić:
 1. W terminalu, w folderze projektu: `node server.mjs`

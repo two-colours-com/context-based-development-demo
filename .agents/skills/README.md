@@ -72,7 +72,7 @@ Windows: skopiuj te same katalogi do `%USERPROFILE%\.claude\skills\` i `%USERPRO
 
 Masz już skille o tych samych nazwach, np. `grill` z innego zestawu? Zostaw jedną wersję. Przy dwóch wersjach o jednej nazwie narzędzie wybierze jedną z nich, niekoniecznie tę, której się spodziewasz.
 
-Ścieżki w skillach (`data/`, `node --test tests/`, `node server.mjs`) pasują do tej aplikacji. W innym projekcie opisz swoje komendy i foldery w `AGENTS.md`, a skille się do nich dostosują.
+Ścieżki w skillach (`data/`, `node --test`, `node server.mjs`) pasują do tej aplikacji. W innym projekcie opisz swoje komendy i foldery w `AGENTS.md`, a skille się do nich dostosują.
 
 ## Dlaczego `plan-zmiany`, a nie `plan`
 
