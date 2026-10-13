@@ -50,5 +50,44 @@
       "sekcja": "zamkniete",
       "rola": "przegrana"
     }
+  ],
+  "statusy_projektow": [
+    {
+      "id": "w-toku",
+      "nazwa": "W toku",
+      "kolor": "#2563eb",
+      "sekcja": "aktywne"
+    },
+    {
+      "id": "zakonczony",
+      "nazwa": "Zakończony",
+      "kolor": "#059669",
+      "sekcja": "zamkniete"
+    }
+  ],
+  "statusy_zadan": [
+    {
+      "id": "do-zrobienia",
+      "nazwa": "Do zrobienia",
+      "kolor": "#64748b",
+      "sekcja": "aktywne"
+    },
+    {
+      "id": "w-toku",
+      "nazwa": "W toku",
+      "kolor": "#2563eb",
+      "sekcja": "aktywne"
+    },
+    {
+      "id": "zrobione",
+      "nazwa": "Zrobione",
+      "kolor": "#059669",
+      "sekcja": "zamkniete"
+    }
+  ],
+  "szablon_zadan": [
+    "Pomiar końcowy",
+    "Produkcja",
+    "Montaż"
   ]
 }

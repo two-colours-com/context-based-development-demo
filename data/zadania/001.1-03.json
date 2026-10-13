@@ -1,0 +1,40 @@
+{
+  "projekt": "001.1",
+  "nazwa": "Montaż",
+  "status": "zrobione",
+  "uzytkownik": "marek",
+  "data": "2026-08-21",
+  "utworzono": "2026-07-02",
+  "aktywnosc": [
+    {
+      "data": "2026-07-31T16:20",
+      "autor": "marek",
+      "typ": "zmiana",
+      "zmiany": [
+        {
+          "pole": "data",
+          "przed": null,
+          "po": "2026-08-21"
+        }
+      ]
+    },
+    {
+      "data": "2026-08-21T22:10",
+      "autor": "marek",
+      "typ": "notatka",
+      "tresc": "Montaż w dwa wieczory, 20 i 21 sierpnia po 18:00. Tomasz zadowolony, pyta o regały na zaplecze."
+    },
+    {
+      "data": "2026-08-21T22:12",
+      "autor": "marek",
+      "typ": "zmiana",
+      "zmiany": [
+        {
+          "pole": "status",
+          "przed": "do-zrobienia",
+          "po": "zrobione"
+        }
+      ]
+    }
+  ]
+}

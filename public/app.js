@@ -1,9 +1,11 @@
 // Brain Stolarni Dąb w przeglądarce: rama, router po adresie, ekrany i odświeżanie na żywo.
 // Cała baza przychodzi z /api/baza, a każdy ekran liczy się od nowa z tych danych.
-// Ekran zapisuje tylko zmiany szansy (przez serwer). Resztę zmienia agent w plikach.
+// Ekran zapisuje zmiany szansy i zadania oraz zakłada projekt z wygranej szansy (przez serwer). Resztę zmienia agent w plikach.
+
+import { todayBuckets, daysOverdue, progress, isClosed, taskProject } from './reguly.js';
 
 const $ = (id) => document.getElementById(id);
-const state = { db: {}, prev: {}, flash: new Set(), own: new Map(), drafts: new Map(), path: null, query: '' };
+const state = { db: {}, prev: {}, flash: new Set(), own: new Map(), drafts: new Map(), path: null, query: '', creating: null };
 
 /* ---- Pomocnicze ---- */
 
@@ -28,6 +30,7 @@ const ICONS = {
   dashboard: '<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>',
   szanse: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
   organizacje: '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01"/>',
+  projekty: '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/><path d="M8 10v4M12 10v2M16 10v6"/>',
   osoba: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
   uwaga: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/>',
   telefon: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
@@ -45,16 +48,27 @@ const demo = () => (state.db.demo && !state.db.demo.blad ? state.db.demo : {});
 // „Dziś” jest zamrożone w data/demo.json (dzień pokazu), żeby „Na dziś” zawsze wyglądało tak samo.
 const today = () => demo().dzis ?? new Date().toLocaleDateString('sv-SE');
 const me = () => demo().biezacy_uzytkownik ?? null;
-const statuses = () => (Array.isArray(demo().statusy) ? demo().statusy : []);
-const status = (id) => statuses().find((s) => s.id === id) ?? { id, nazwa: id ?? '-', kolor: '#737373', sekcja: 'aktywne' };
-const isOpen = (s) => status(s.status).sekcja !== 'zamkniete';
-const badge = (id) => `<span class="st-badge" style="--c:${esc(status(id).kolor)}">${esc(status(id).nazwa)}</span>`;
+// Statusy szans, projektów i zadań leżą w demo.json w osobnych listach. `col` to kolekcja rekordu.
+const STATUS_LISTS = { szanse: 'statusy', projekty: 'statusy_projektow', zadania: 'statusy_zadan' };
+const statuses = (col = 'szanse') => (Array.isArray(demo()[STATUS_LISTS[col]]) ? demo()[STATUS_LISTS[col]] : []);
+const status = (id, col = 'szanse') => statuses(col).find((s) => s.id === id) ?? { id, nazwa: id ?? '-', kolor: '#737373', sekcja: 'aktywne' };
+const isOpen = (s, col = 'szanse') => !isClosed(statuses(col), s.status);
+const badge = (id, col = 'szanse') => `<span class="st-badge" style="--c:${esc(status(id, col).kolor)}">${esc(status(id, col).nazwa)}</span>`;
 const users = () => list('uzytkownicy');
 const userName = (id) => users().find((u) => u.id === id)?.imie_nazwisko ?? null;
 const PRIORITIES = [['wysoki', 'Wysoki'], ['sredni', 'Średni'], ['niski', 'Niski']];
 const prioName = (id) => PRIORITIES.find(([p]) => p === id)?.[1] ?? 'bez priorytetu';
 const byDate = (a, b) => String(a?.data ?? '').localeCompare(String(b?.data ?? ''));
 const dealsOf = (orgId) => list('szanse').filter((s) => !s.blad && s.organizacja === orgId);
+const byId = (a, b) => String(a.id).localeCompare(String(b.id), 'pl', { numeric: true }); // 002.2 przed 002.10
+// Uszkodzony projekt nie ma pola `organizacja`, ale numer pliku (002.1) mówi, czyj jest.
+const projectsOf = (orgId) => list('projekty').filter((p) => (p.blad ? p.id.startsWith(`${orgId}.`) : p.organizacja === orgId)).sort(byId);
+const projectsOfDeal = (dealId) => list('projekty').filter((p) => !p.blad && p.szansa === dealId).sort(byId);
+const tasksOf = (projectId) => list('zadania').filter((t) => taskProject(t) === projectId).sort(byId);
+const progressText = (p) => {
+  const { zrobione, wszystkie } = progress(p.id, list('zadania'), statuses('zadania'));
+  return `${zrobione} z ${wszystkie}`;
+};
 const isPrivate = (o) => o?.typ === 'osoba prywatna';
 // Podpis klienta w wierszu: firma z osobą kontaktową albo osoba prywatna.
 const clientLine = (o) => (!o ? 'brak klienta' : isPrivate(o) ? `${o.nazwa} · osoba prywatna` : [o.nazwa, o.osoba_kontaktowa?.imie_nazwisko].filter(Boolean).join(' · '));
@@ -92,9 +106,9 @@ const fieldsList = (rows) =>
   `<dl class="fields">${rows.filter(([, v]) => v != null && v !== '').map(([k, v, hot]) => `<dt>${esc(k)}</dt><dd class="${hot ? 'flash' : ''}">${v}</dd>`).join('')}</dl>`;
 const orgLink = (o) => (o ? `<a class="lnk" href="/organizacje/${esc(o.id)}">${esc(o.nazwa)}</a>` : 'brak klienta');
 
-function overdue(s) {
-  if (!isOpen(s) || !s.data) return '';
-  const n = Math.round((Date.parse(today()) - Date.parse(day(s.data))) / 864e5);
+function overdue(s, col = 'szanse') {
+  if (!isOpen(s, col)) return '';
+  const n = daysOverdue(s.data, today());
   return n > 0 ? `<span class="warn">${icon('uwaga')}${n} ${plural(n, 'dzień', 'dni', 'dni')} po terminie</span>` : '';
 }
 
@@ -106,43 +120,59 @@ function personBox(o, hot) {
     ${p.telefon ? `<p class="person-line">${icon('telefon')} ${esc(p.telefon)}</p>` : ''}${p.email ? `<p class="person-line">${icon('mail')} ${esc(p.email)}</p>` : ''}</div>`, hot ? ' flash' : '');
 }
 
-// Kontrolki szansy: każda zmiana od razu idzie do pliku (PATCH), a serwer dopisuje ślad w aktywności.
+// Kontrolki szansy i zadania: każda zmiana od razu idzie do pliku (PATCH), a serwer dopisuje ślad w aktywności.
 const opt = (value, label, current) => `<option value="${esc(value)}"${value === (current ?? '') ? ' selected' : ''}>${esc(label)}</option>`;
-const patchAttr = (s, field) => `data-patch="${esc(s.id)}" data-field="${field}"`;
-const statusSelect = (s) =>
-  `<select class="sel status-sel" style="--c:${esc(status(s.status).kolor)}" ${patchAttr(s, 'status')} aria-label="Status">${statuses().map((x) => opt(x.id, x.nazwa, s.status)).join('')}</select>`;
+const patchAttr = (s, field, col = 'szanse') => `data-col="${col}" data-patch="${esc(s.id)}" data-field="${field}"`;
+const statusSelect = (s, col = 'szanse') =>
+  `<select class="sel status-sel" style="--c:${esc(status(s.status, col).kolor)}" ${patchAttr(s, 'status', col)} aria-label="Status">${statuses(col).map((x) => opt(x.id, x.nazwa, s.status)).join('')}</select>`;
 const prioSelect = (s) =>
   `<select class="sel prio p-${esc(s.priorytet ?? 'brak')}" ${patchAttr(s, 'priorytet')} aria-label="Priorytet">${opt('', 'bez priorytetu', s.priorytet)}${PRIORITIES.map(([id, n]) => opt(id, n, s.priorytet)).join('')}</select>`;
-const dateInput = (s) => `<input class="sel" type="date" value="${esc(s.data ?? '')}" ${patchAttr(s, 'data')} aria-label="Termin">`;
-const ownerSelect = (s) =>
-  `<select class="sel" ${patchAttr(s, 'uzytkownik')} aria-label="Opiekun">${opt('', 'bez opiekuna', s.uzytkownik)}${users().map((u) => opt(u.id, u.imie_nazwisko, s.uzytkownik)).join('')}</select>`;
-const takeButton = (s) => `<button type="button" class="btn primary" data-take="${esc(s.id)}">Przejmij</button>`;
+const dateInput = (s, col = 'szanse') => `<input class="sel" type="date" value="${esc(s.data ?? '')}" ${patchAttr(s, 'data', col)} aria-label="Termin">`;
+// Szansa ma opiekuna, zadanie osobę. To samo pole `uzytkownik`.
+const NOBODY = { szanse: 'bez opiekuna', zadania: 'bez osoby' };
+const ownerSelect = (s, col = 'szanse') =>
+  `<select class="sel" ${patchAttr(s, 'uzytkownik', col)} aria-label="${col === 'zadania' ? 'Osoba' : 'Opiekun'}">${opt('', NOBODY[col], s.uzytkownik)}${users().map((u) => opt(u.id, u.imie_nazwisko, s.uzytkownik)).join('')}</select>`;
+const takeButton = (s, col = 'szanse') => `<button type="button" class="btn primary" data-col="${col}" data-take="${esc(s.id)}">Przejmij</button>`;
 
 /* ---- Na dziś ---- */
 
+// Szanse i zadania razem, według tych samych zasad (public/reguly.js). Zadanie bez terminu i zrobione tu nie trafia.
 function viewToday() {
   const t = today();
-  const open = list('szanse').filter((s) => !s.blad && isOpen(s)).sort(byDate);
-  const mine = open.filter((s) => s.uzytkownik === me());
+  const b = todayBuckets({ deals: list('szanse'), tasks: list('zadania'), dzis: t, me: me(), statusy: statuses(), statusyZadan: statuses('zadania') });
   return `${head('Na dziś', `Dziś jest ${fmtLong(t)}. Sprawa wraca tutaj w dniu swojego terminu.`)}
     <p class="eyebrow">Moje zadania</p>
-    ${todaySection('Do zrobienia', 'Twoje sprawy z terminem na dziś i wcześniej.', mine.filter((s) => !s.data || s.data <= t))}
-    ${todaySection('Przyszłe', 'Twoje sprawy z terminem w kolejnych dniach. Wrócą tu same.', mine.filter((s) => s.data > t))}
-    ${todaySection('Nieprzypisane', 'Sprawy bez opiekuna. Widzą je wszyscy, dopóki ktoś ich nie weźmie.', open.filter((s) => !s.uzytkownik), true)}`;
+    ${todaySection('Do zrobienia', 'Twoje sprawy z terminem na dziś i wcześniej.', b.doZrobienia)}
+    ${todaySection('Przyszłe', 'Twoje sprawy z terminem w kolejnych dniach. Wrócą tu same.', b.przyszle)}
+    ${todaySection('Nieprzypisane', 'Sprawy bez opiekuna. Widzą je wszyscy, dopóki ktoś ich nie weźmie.', b.nieprzypisane, true)}`;
 }
 
-function todaySection(title, sub, deals, pool = false) {
-  const cls = `today-row${pool ? ' pool' : ''}`;
-  const rows = deals.map(
-    (s) => `<li class="${cls}${fl(`szanse/${s.id}`)}">
+function todayDealRow(s, cls, pool) {
+  return `<li class="${cls}${fl(`szanse/${s.id}`)}">
       <a class="today-main" href="/szanse/${esc(s.id)}"><span class="id mono">${esc(s.id)}</span><span class="main-col">
         <span class="title-line"><span class="title">${esc(s.nazwa)}</span>${overdue(s)}</span><span class="sub">${esc(clientLine(find('organizacje', s.organizacja)))}</span></span></a>
       ${statusSelect(s)}${prioSelect(s)}${dateInput(s)}${ownerSelect(s)}${pool ? takeButton(s) : ''}
-    </li>`,
-  );
+    </li>`;
+}
+
+// Zadanie w „Na dziś”: plakietka „Zadanie”, pod nazwą projekt i klient, bez priorytetu.
+function todayTaskRow(z, cls, pool) {
+  const p = find('projekty', taskProject(z));
+  const o = find('organizacje', p?.organizacja);
+  const sub = [`Projekt ${taskProject(z)}`, o?.nazwa].filter(Boolean).join(' · ');
+  return `<li class="${cls}${fl(`zadania/${z.id}`)}">
+      <a class="today-main" href="/zadania/${esc(z.id)}"><span class="id mono">${esc(z.id)}</span><span class="main-col">
+        <span class="title-line"><span class="title">${esc(z.nazwa)}</span><span class="tag">Zadanie</span>${overdue(z, 'zadania')}</span><span class="sub">${esc(sub)}</span></span></a>
+      ${statusSelect(z, 'zadania')}<span></span>${dateInput(z, 'zadania')}${ownerSelect(z, 'zadania')}${pool ? takeButton(z, 'zadania') : ''}
+    </li>`;
+}
+
+function todaySection(title, sub, items, pool = false) {
+  const cls = `today-row${pool ? ' pool' : ''}`;
+  const rows = items.map(({ typ, rec }) => (typ === 'zadanie' ? todayTaskRow(rec, cls, pool) : todayDealRow(rec, cls, pool)));
   const cols = `<div class="${cls} cols"><span></span><span>Status</span><span>Priorytet</span><span>Termin</span><span>Opiekun</span>${pool ? '<span></span>' : ''}</div>`;
-  return `<section class="box"><div class="box-head"><div><h2>${title}</h2><p class="muted xs">${sub}</p></div><span class="count">${deals.length}</span></div>
-    ${deals.length ? `${cols}<ul class="rows">${rows.join('')}</ul>` : ''}</section>`;
+  return `<section class="box"><div class="box-head"><div><h2>${title}</h2><p class="muted xs">${sub}</p></div><span class="count">${items.length}</span></div>
+    ${items.length ? `${cols}<ul class="rows">${rows.join('')}</ul>` : ''}</section>`;
 }
 
 /* ---- Szanse ---- */
@@ -189,6 +219,7 @@ function viewDeal(id) {
           <label class="fld${hot('priorytet')}"><span class="fld-label">Priorytet</span>${prioSelect(s)}</label>
           <div class="fld${hot('uzytkownik')}"><span class="fld-label">Opiekun</span><div class="fld-row">${ownerSelect(s)}${s.uzytkownik === me() ? '' : takeButton(s)}</div></div>
           <label class="fld${hot('data')}"><span class="fld-label">Termin następnego kroku</span>${dateInput(s)}${overdue(s)}</label>
+          ${dealProjectField(s)}
         </div>
         ${box('Dane', null, fieldsList([
           ['Wartość netto', money(s.wartosc), chg.has('wartosc')],
@@ -199,26 +230,45 @@ function viewDeal(id) {
         ${personBox(o, state.flash.has(`organizacje/${o?.id}`))}
       </div>
     </div>
-    <aside class="cs-aside">
-      <div class="cs-aside-head"><span class="cs-label">Aktywność</span><span class="cs-hint">najstarsze u góry</span></div>
-      <div class="cs-scroll" data-scroll="aktywnosc" data-bottom>${timeline(s)}</div>
-      <form class="cs-foot" data-comment="${esc(s.id)}">${avatar(userName(me()))}<div class="grow">
-        <textarea class="textarea" id="komentarz-${esc(s.id)}" maxlength="5000" placeholder="Dopisz, co się w sprawie stało.">${esc(state.drafts.get(`komentarz-${s.id}`) ?? '')}</textarea>
-        <div class="foot-row"><button class="btn primary">Dodaj komentarz</button></div></div></form>
-    </aside>
+    ${activityAside(s, 'szanse', 'Dopisz, co się w sprawie stało.')}
   </div>`;
 }
 
+// Projekt szansy: odnośnik „Projekt 001.1”, a przy wygranej szansie bez projektu przycisk „Załóż projekt”.
+function dealProjectField(s) {
+  const projects = projectsOfDeal(s.id);
+  if (projects.length) {
+    const links = projects.map((p) => `<span><a class="lnk" href="/projekty/${esc(p.id)}">Projekt ${esc(p.id)}</a> <span class="muted">${esc(p.nazwa)}</span></span>`).join('');
+    return `<div class="fld${fl(`projekty/${projects[0].id}`)}"><span class="fld-label">Projekt</span><p class="fld-text">${links}</p></div>`;
+  }
+  if (status(s.status).rola !== 'wygrana') return '';
+  const template = Array.isArray(demo().szablon_zadan) ? demo().szablon_zadan : [];
+  const busy = state.creating === s.id;
+  return `<div class="fld"><span class="fld-label">Projekt</span><div class="fld-row">
+    <button type="button" class="btn primary" data-create-project="${esc(s.id)}"${busy ? ' disabled' : ''}>${busy ? 'Zakładam…' : 'Załóż projekt'}</button>
+    <span class="muted xs fld-hint">${template.length ? `Zadania startowe: ${esc(template.join(', '))}.` : 'Projekt bez zadań startowych.'}</span></div></div>`;
+}
+
+// Panel aktywności z boku (szansa, zadanie): oś czasu i pole „Dodaj komentarz”.
+const activityAside = (r, col, placeholder) => `<aside class="cs-aside">
+      <div class="cs-aside-head"><span class="cs-label">Aktywność</span><span class="cs-hint">najstarsze u góry</span></div>
+      <div class="cs-scroll" data-scroll="aktywnosc" data-bottom>${timeline(r, col)}</div>
+      <form class="cs-foot" data-col="${col}" data-comment="${esc(r.id)}">${avatar(userName(me()))}<div class="grow">
+        <textarea class="textarea" id="komentarz-${col}-${esc(r.id)}" maxlength="5000" placeholder="${esc(placeholder)}">${esc(state.drafts.get(`komentarz-${col}-${r.id}`) ?? '')}</textarea>
+        <div class="foot-row"><button class="btn primary">Dodaj komentarz</button></div></div></form>
+    </aside>`;
+
 // Oś czasu: najstarsze u góry. Wpisy osób i agenta z `aktywnosc`, zmiany statusu z `historia` jako wpisy systemowe.
-function timeline(s) {
-  const fresh = newEntries('szanse', s.id, 'aktywnosc', 'historia');
+// Zadanie nie ma historii: zmianę statusu pokazuje sam wpis „zmiana”.
+function timeline(s, col = 'szanse') {
+  const fresh = newEntries(col, s.id, 'aktywnosc', 'historia');
   const akt = Array.isArray(s.aktywnosc) ? s.aktywnosc : [];
   const hist = Array.isArray(s.historia) ? s.historia : [];
   // Zmiana statusu z ekranu ma już wpis osoby („zmiana”), więc ten krok historii nie powtarza się jako „System”.
   const covered = new Set(akt.flatMap((a) => (a.typ === 'zmiana' && Array.isArray(a.zmiany) ? a.zmiany : []).filter((c) => c.pole === 'status').map((c) => `${a.data}|${c.po}`)));
   const entries = [
     ...hist.map((h, i) => ({ data: h.data, html: covered.has(`${h.data}|${h.status}`) ? '' : systemEntry(h, hist[i - 1], fresh(h)) })),
-    ...akt.map((a) => ({ data: a.data, html: activityEntry(a, fresh(a)) })),
+    ...akt.map((a) => ({ data: a.data, html: activityEntry(a, fresh(a), col) })),
   ].filter((e) => e.html);
   entries.sort(byDate);
   return entries.length ? `<ol class="tl">${entries.map((e) => e.html).join('')}</ol>` : '<p class="box-empty">Nic się tu jeszcze nie wydarzyło.</p>';
@@ -230,15 +280,17 @@ const systemEntry = (h, prev, fresh) => `<li class="${fresh ? 'flash' : ''}"><sp
 
 const TYPES = { notatka: 'notatka', telefon: 'telefon', spotkanie: 'spotkanie', mail: 'e-mail', zmiana: 'zmiana' };
 const FIELDS = { status: 'Status', priorytet: 'Priorytet', uzytkownik: 'Opiekun', data: 'Termin' };
+const TASK_FIELDS = { ...FIELDS, uzytkownik: 'Osoba' };
 
-function activityEntry(a, fresh) {
+function activityEntry(a, fresh, col = 'szanse') {
   const agent = a.autor === 'agent';
   const name = agent ? 'Agent' : (userName(a.autor) ?? a.autor ?? '-');
+  const labels = col === 'zadania' ? TASK_FIELDS : FIELDS;
   const show = (pole, v) =>
-    pole === 'status' ? badge(v) : pole === 'uzytkownik' ? esc(userName(v) ?? 'bez opiekuna') : pole === 'data' ? fmtDate(v) : pole === 'priorytet' ? esc(prioName(v)) : esc(v ?? '-');
+    pole === 'status' ? badge(v, col) : pole === 'uzytkownik' ? esc(userName(v) ?? NOBODY[col]) : pole === 'data' ? fmtDate(v) : pole === 'priorytet' ? esc(prioName(v)) : esc(v ?? '-');
   const body =
     a.typ === 'zmiana'
-      ? `<ul class="tl-changes">${(Array.isArray(a.zmiany) ? a.zmiany : []).map((c) => `<li><span class="muted">${esc(FIELDS[c.pole] ?? c.pole)}:</span> <span class="was">${show(c.pole, c.przed)}</span> → ${show(c.pole, c.po)}</li>`).join('')}</ul>`
+      ? `<ul class="tl-changes">${(Array.isArray(a.zmiany) ? a.zmiany : []).map((c) => `<li><span class="muted">${esc(labels[c.pole] ?? c.pole)}:</span> <span class="was">${show(c.pole, c.przed)}</span> → ${show(c.pole, c.po)}</li>`).join('')}</ul>`
       : `<p class="tl-text">${esc(a.tresc)}</p>`;
   return `<li class="${fresh ? 'flash' : ''}">${agent ? `<span class="avatar bot">${icon('agent')}</span>` : avatar(name)}<div class="tl-body">
     <div class="tl-meta"><span class="tl-who">${esc(name)}</span>${agent ? '<span class="pill agent">przez agenta</span>' : ''}<span class="pill">${esc(TYPES[a.typ] ?? a.typ)}</span><span>${fmtStamp(a.data)}</span></div>
@@ -267,6 +319,7 @@ function viewOrg(id) {
   if (!o || o.blad) return `${back('/organizacje', 'Organizacje')}${empty(o ? 'Ten rekord ma błąd w danych.' : `Organizacja ${id} nie istnieje.`)}`;
   const chg = changedFields('organizacje', o.id);
   const deals = dealsOf(o.id).sort((a, b) => b.id.localeCompare(a.id));
+  const projects = projectsOf(o.id);
   const dealList = deals.map((s) => `<li><a class="row${fl(`szanse/${s.id}`)}" href="/szanse/${esc(s.id)}"><span class="id mono">${esc(s.id)}</span>
     <span class="main-col"><span class="title">${esc(s.nazwa)}</span><span class="sub">${esc(userName(s.uzytkownik) ?? 'bez opiekuna')}</span></span>
     <span class="cell">${badge(s.status)}</span><span class="cell money">${money(s.wartosc)}</span></a></li>`);
@@ -281,7 +334,99 @@ function viewOrg(id) {
         ['Dodano', fmtLong(o.dodano)],
       ])}</section>
       ${personBox(o, chg.has('osoba_kontaktowa'))}</div>
-    ${box('Szanse', deals.length, `<ul class="rows">${dealList.join('') || '<li class="box-empty">Brak szans.</li>'}</ul>`)}</div>`;
+    <div class="stack">${box('Szanse', deals.length, `<ul class="rows">${dealList.join('') || '<li class="box-empty">Brak szans.</li>'}</ul>`)}
+      ${box('Projekty', projects.length, projectRows(projects, 'Brak projektów.', false))}</div></div>`;
+}
+
+/* ---- Projekty (status i nazwę zmienia agent, ekran zmienia zadania) ---- */
+
+// Wiersz projektu: numer, nazwa, pod spodem klient (albo opiekun na karcie klienta), postęp „X z Y”, opiekun.
+function projectRows(projects, emptyText, withClient = true) {
+  const rows = projects.map((p) => {
+    if (p.blad) return broken(p);
+    const o = find('organizacje', p.organizacja);
+    const { zrobione, wszystkie } = progress(p.id, list('zadania'), statuses('zadania'));
+    const sub = withClient ? clientLine(o) : (userName(p.uzytkownik) ?? 'bez opiekuna');
+    return `<li><a class="row${fl(`projekty/${p.id}`)}" href="/projekty/${esc(p.id)}"><span class="id mono">${esc(p.id)}</span>
+      <span class="main-col"><span class="title">${esc(p.nazwa)}</span><span class="sub">${esc(sub)}</span></span>
+      ${withClient ? '' : `<span class="cell">${badge(p.status, 'projekty')}</span>`}
+      <span class="cell c-progress" title="Zrobione zadania"><span class="bar"><i style="width:${wszystkie ? (zrobione / wszystkie) * 100 : 0}%"></i></span><span class="num">${zrobione} z ${wszystkie}</span></span>
+      ${withClient ? `<span class="cell c-user muted">${esc(userName(p.uzytkownik) ?? 'bez opiekuna')}</span>` : ''}</a></li>`;
+  });
+  return `<ul class="rows">${rows.join('') || `<li class="box-empty">${esc(emptyText)}</li>`}</ul>`;
+}
+
+function viewProjects() {
+  const all = list('projekty').slice().sort(byId);
+  // Uszkodzony plik zostaje w „W toku”, żeby nie zginął z oczu.
+  const open = all.filter((p) => p.blad || isOpen(p, 'projekty'));
+  const closed = all.filter((p) => !p.blad && !isOpen(p, 'projekty'));
+  return `${head('Projekty', `${all.length} ${plural(all.length, 'projekt', 'projekty', 'projektów')}, ${open.length} w toku. Projekt zakładasz z wygranej szansy.`)}
+    ${box('W toku', open.length, projectRows(open, 'Brak projektów w toku.'))}${box('Zakończone', closed.length, projectRows(closed, 'Brak zakończonych projektów.'))}`;
+}
+
+function viewProject(id) {
+  const p = find('projekty', id);
+  if (!p || p.blad) return `${back('/projekty', 'Projekty')}${empty(p ? `Projekt ${id} ma błąd w danych.` : `Projekt ${id} nie istnieje.`)}`;
+  const o = find('organizacje', p.organizacja);
+  const deal = find('szanse', p.szansa);
+  const chg = changedFields('projekty', p.id);
+  const tasks = tasksOf(p.id);
+  const cls = 'today-row task-row';
+  const rows = tasks.map((z) =>
+    z.blad
+      ? `<li class="${cls} broken"><span class="today-main"><span class="id mono">${esc(z.id)}</span><span class="main-col">Ten rekord ma błąd w danych.</span></span></li>`
+      : `<li class="${cls}${fl(`zadania/${z.id}`)}"><a class="today-main" href="/zadania/${esc(z.id)}"><span class="id mono">${esc(z.id)}</span><span class="main-col">
+        <span class="title-line"><span class="title">${esc(z.nazwa)}</span>${overdue(z, 'zadania')}</span></span></a>
+        ${statusSelect(z, 'zadania')}${dateInput(z, 'zadania')}${ownerSelect(z, 'zadania')}</li>`,
+  );
+  const cols = `<div class="${cls} cols"><span></span><span>Status</span><span>Termin</span><span>Osoba</span></div>`;
+  return `${back('/projekty', 'Projekty')}
+    <section class="box"><div class="rh">${avatar(o?.nazwa ?? p.nazwa, 'lg')}<div><p class="kicker">Projekt ${esc(p.id)}</p><h1 class="${chg.has('nazwa') ? 'flash' : ''}">${esc(p.nazwa)}</h1></div></div>
+      ${fieldsList([
+        ['Klient', o ? `${orgLink(o)} <span class="muted">${esc(o.id)}, ${esc(o.typ ?? '')}</span>` : esc(p.organizacja ?? 'brak klienta'), chg.has('organizacja')],
+        ['Szansa', deal && !deal.blad ? `<a class="lnk" href="/szanse/${esc(deal.id)}">${esc(deal.id)}</a> <span class="muted">${esc(deal.nazwa)}</span>` : esc(p.szansa ?? '-'), chg.has('szansa')],
+        ['Opiekun', esc(userName(p.uzytkownik) ?? 'bez opiekuna'), chg.has('uzytkownik')],
+        ['Status', badge(p.status, 'projekty'), chg.has('status')],
+        ['Postęp', `${progressText(p)} <span class="muted">zrobione</span>`],
+        ['Utworzono', fmtLong(p.utworzono)],
+      ])}</section>
+    ${box('Zadania', tasks.length, tasks.length ? `${cols}<ul class="rows">${rows.join('')}</ul>` : '<p class="box-empty">Brak zadań.</p>')}`;
+}
+
+function viewTask(id) {
+  const z = find('zadania', id);
+  if (!z || z.blad) return `${back('/projekty', 'Projekty')}${empty(z ? `Zadanie ${id} ma błąd w danych.` : `Zadanie ${id} nie istnieje.`)}`;
+  const pid = taskProject(z);
+  const p = find('projekty', pid);
+  const o = find('organizacje', p?.organizacja);
+  const deal = find('szanse', p?.szansa);
+  const chg = changedFields('zadania', z.id);
+  const hot = (f) => (chg.has(f) ? ' flash' : '');
+  const projectLink = `<a class="lnk" href="/projekty/${esc(pid)}">Projekt ${esc(pid)}</a>`;
+  return `<div class="cshell">
+    <div class="cs-main">
+      <div class="cs-head">
+        <nav class="crumbs"><a href="/projekty">${icon('wstecz')} Projekty</a><span>/</span><a class="mono" href="/projekty/${esc(pid)}">${esc(pid)}</a><span>/</span><span class="mono">${esc(z.id)}</span>${badge(z.status, 'zadania')}</nav>
+        <h1 class="cs-title${hot('nazwa')}">${esc(z.nazwa)}</h1>
+        <p class="cs-sub">${icon('projekty')} ${projectLink}${p && !p.blad ? ` · ${esc(p.nazwa)}` : ''}${o ? ` · ${orgLink(o)}` : ''}</p>
+      </div>
+      <div class="cs-data">
+        <div class="fields-grid">
+          <label class="fld${hot('status')}"><span class="fld-label">Status</span>${statusSelect(z, 'zadania')}</label>
+          <div class="fld${hot('uzytkownik')}"><span class="fld-label">Osoba</span><div class="fld-row">${ownerSelect(z, 'zadania')}${z.uzytkownik === me() ? '' : takeButton(z, 'zadania')}</div></div>
+          <label class="fld${hot('data')}"><span class="fld-label">Termin</span>${dateInput(z, 'zadania')}${overdue(z, 'zadania')}</label>
+        </div>
+        ${box('Dane', null, fieldsList([
+          ['Projekt', `${projectLink}${p && !p.blad ? ` <span class="muted">${esc(p.nazwa)}</span>` : ''}`, chg.has('projekt')],
+          ['Klient', o ? `${orgLink(o)} <span class="muted">${esc(o.id)}, ${esc(o.typ ?? '')}</span>` : 'brak klienta'],
+          ['Szansa', deal && !deal.blad ? `<a class="lnk" href="/szanse/${esc(deal.id)}">${esc(deal.id)}</a> <span class="muted">${esc(deal.nazwa)}</span>` : null],
+          ['Utworzono', fmtLong(z.utworzono)],
+        ]))}
+      </div>
+    </div>
+    ${activityAside(z, 'zadania', 'Dopisz, co się w zadaniu stało.')}
+  </div>`;
 }
 
 /* ---- Dashboard (tylko do odczytu, karty z data/dashboard.json) ---- */
@@ -331,11 +476,14 @@ function viewDashboard() {
 
 /* ---- Rama i router ---- */
 
-const NAV = [['/', 'Na dziś', 'dzis'], ['/szanse', 'Szanse', 'szanse'], ['/organizacje', 'Organizacje', 'organizacje'], ['/dashboard', 'Dashboard', 'dashboard']];
+const NAV = [['/', 'Na dziś', 'dzis'], ['/szanse', 'Szanse', 'szanse'], ['/projekty', 'Projekty', 'projekty'], ['/organizacje', 'Organizacje', 'organizacje'], ['/dashboard', 'Dashboard', 'dashboard']];
 const ROUTES = [
   [/^\/$/, viewToday],
   [/^\/szanse$/, viewDeals],
   [/^\/szanse\/([^/]+)$/, viewDeal],
+  [/^\/projekty$/, viewProjects],
+  [/^\/projekty\/([^/]+)$/, viewProject],
+  [/^\/zadania\/([^/]+)$/, viewTask],
   [/^\/organizacje$/, viewOrgs],
   [/^\/organizacje\/([^/]+)$/, viewOrg],
   [/^\/dashboard$/, viewDashboard],
@@ -347,7 +495,8 @@ function renderFrame(path) {
   document.title = firma.nazwa ? `Brain · ${firma.nazwa}` : 'Brain';
   $('podpis').textContent = firma.podpis ?? '';
   $('nav').innerHTML = NAV.map(([href, name, ic]) => {
-    const current = href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`);
+    // Zadanie leży w projekcie, więc na /zadania/… podświetlone są „Projekty”.
+    const current = href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`) || (href === '/projekty' && path.startsWith('/zadania/'));
     return `<a class="nav-link" href="${href}"${current ? ' aria-current="page"' : ''}>${icon(ic)}${name}</a>`;
   }).join('');
   const u = users().find((x) => x.id === me());
@@ -399,17 +548,18 @@ function toast(text) {
   toast.timer = setTimeout(() => el.classList.remove('show'), 3500);
 }
 
-async function patchDeal(id, payload) {
-  state.own.set(`szanse/${id}`, Date.now());
+// Zmiana szansy albo zadania (`col`: szanse | zadania).
+async function patchRecord(col, id, payload) {
+  state.own.set(`${col}/${id}`, Date.now());
   try {
-    const res = await fetch(`/api/szanse/${encodeURIComponent(id)}`, {
+    const res = await fetch(`/api/${col}/${encodeURIComponent(id)}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ autor: me(), ...payload }),
     });
     const out = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(out.blad ?? 'Nie udało się zapisać.');
-    if (out.rekord) state.db.szanse = list('szanse').map((r) => (r.id === id ? { ...out.rekord, id } : r));
+    if (out.rekord) state.db[col] = list(col).map((r) => (r.id === id ? { ...out.rekord, id } : r));
     toast('Zapisano.');
     return true;
   } catch (error) {
@@ -420,7 +570,29 @@ async function patchDeal(id, payload) {
   }
 }
 
-const NOUNS = { szanse: 'szansa', organizacje: 'organizacja', dashboard: 'dashboard', demo: 'ustawienia', uzytkownicy: 'użytkownicy' };
+// Projekt z wygranej szansy. Numer nadaje serwer; po założeniu przechodzimy na kartę projektu.
+async function createProject(dealId) {
+  if (state.creating) return;
+  state.creating = dealId;
+  render();
+  try {
+    const res = await fetch('/api/projekty', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ szansa: dealId }) });
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(out.blad ?? 'Nie udało się założyć projektu.');
+    const now = Date.now();
+    for (const key of [`projekty/${out.projekt}`, ...(out.zadania ?? []).map((z) => `zadania/${z}`)]) state.own.set(key, now);
+    state.db = await loadDb();
+    history.pushState(null, '', `/projekty/${encodeURIComponent(out.projekt)}`);
+    toast(`Założono projekt ${out.projekt}.`);
+  } catch (error) {
+    toast(error instanceof TypeError ? 'Brak połączenia z serwerem.' : error.message);
+  } finally {
+    state.creating = null;
+    render();
+  }
+}
+
+const NOUNS = { szanse: 'szansa', projekty: 'projekt', zadania: 'zadanie', organizacje: 'organizacja', dashboard: 'dashboard', demo: 'ustawienia', uzytkownicy: 'użytkownicy' };
 function describe(keys) {
   const [col, id] = keys[0].split('/');
   const now = id ? find(col, id) : state.db[col];
@@ -468,12 +640,14 @@ document.addEventListener('click', (event) => {
     return;
   }
   const take = event.target.closest('[data-take]');
-  if (take) patchDeal(take.dataset.take, { zmiany: { uzytkownik: me() } });
+  if (take) patchRecord(take.dataset.col, take.dataset.take, { zmiany: { uzytkownik: me() } });
+  const create = event.target.closest('[data-create-project]');
+  if (create && !create.disabled) createProject(create.dataset.createProject);
 });
 
 document.addEventListener('change', (event) => {
   const el = event.target.closest('[data-patch]');
-  if (el) patchDeal(el.dataset.patch, { zmiany: { [el.dataset.field]: el.value || null } });
+  if (el) patchRecord(el.dataset.col, el.dataset.patch, { zmiany: { [el.dataset.field]: el.value || null } });
 });
 
 document.addEventListener('input', (event) => {
@@ -493,7 +667,7 @@ document.addEventListener('submit', async (event) => {
   if (!text || !form.dataset.comment) return;
   form.querySelector('button').disabled = true;
   state.drafts.delete(area.id);
-  if (!(await patchDeal(form.dataset.comment, { komentarz: text }))) {
+  if (!(await patchRecord(form.dataset.col, form.dataset.comment, { komentarz: text }))) {
     state.drafts.set(area.id, text); // nieudany zapis nie kasuje wpisanego tekstu
     render();
   }

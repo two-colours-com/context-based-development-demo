@@ -1,0 +1,16 @@
+{
+  "projekt": "010.1",
+  "nazwa": "Produkcja biurka i regału",
+  "status": "do-zrobienia",
+  "uzytkownik": "marek",
+  "data": "2026-10-28",
+  "utworzono": "2026-10-07",
+  "aktywnosc": [
+    {
+      "data": "2026-10-07T10:45",
+      "autor": "marek",
+      "typ": "notatka",
+      "tresc": "Start produkcji po dostawie płyt. Blat 300 cm klejony z dwóch części, łączenie pod regałem."
+    }
+  ]
+}

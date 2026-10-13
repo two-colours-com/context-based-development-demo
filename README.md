@@ -8,6 +8,7 @@ Bazą są zwykłe pliki JSON w katalogu `data/`. Ekran w przeglądarce i agent A
 
 - **Na dziś**: moje sprawy z terminem na dziś i zaległe, przyszłe i nieprzypisane. Status, priorytet, termin i opiekuna zmieniasz w wierszu.
 - **Szanse**: lista z wyszukiwarką i widok szansy z osią aktywności i polem na komentarz.
+- **Projekty**: projekty klienta (002.1) z zadaniami. Projekt zakładasz z wygranej szansy, zadania z terminem wracają do „Na dziś”.
 - **Organizacje**: klienci (firmy i osoby prywatne) z osobą kontaktową i szansami.
 - **Dashboard**: karty liczone z szans. Układ kart leży w `data/dashboard.json`.
 
@@ -52,15 +53,18 @@ Pliki dodane w trakcie (np. nowa szansa) pokaże `git clean -n data/`, a usunie 
 ## Struktura
 
 ```
-server.mjs          serwer (127.0.0.1:4400): odczyt bazy, zapis zmian szansy, zmiany na żywo
-public/             ekran: index.html, app.js, app.css
+server.mjs          serwer (127.0.0.1:4400): odczyt bazy, zapis zmian szansy i zadania, zakładanie projektu, zmiany na żywo
+lib/                reguły bez ekranu, np. numeracja projektów i zadań
+public/             ekran: index.html, app.js, app.css, reguly.js (Na dziś, postęp projektu)
 data/               baza: jeden plik JSON = jeden rekord
-  demo.json           firma, dzień pokazu, bieżący użytkownik, statusy szans
+  demo.json           firma, dzień pokazu, bieżący użytkownik, statusy szans, projektów i zadań, szablon zadań
   uzytkownicy.json    zespół stolarni
   dashboard.json      karty dashboardu
   organizacje/        klienci: 001.json, 002.json ...
   szanse/             szanse sprzedażowe: SL-011.json ...
-tests/              testy spójności danych (node --test)
+  projekty/           projekty klienta: 001.1.json ...
+  zadania/            zadania projektów: 001.1-01.json ...
+tests/              testy spójności danych, reguł i API (node --test)
 doc/
   decisions/          decyzje (ADR)
   history/            kronika budowy

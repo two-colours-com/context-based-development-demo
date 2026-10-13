@@ -11,10 +11,10 @@ Słownik pojęć: `CONTEXT.md`. Decyzje: `doc/decisions/`. Pomysły na rozbudow�
 3. **Zapisuj cały plik naraz** jako poprawny JSON: UTF-8, wcięcie 2 spacje, nowa linia na końcu. Bez komentarzy i bez przecinka po ostatnim elemencie.
 4. **Daty absolutne.** Dzień: `RRRR-MM-DD`. Moment (aktywność, historia): `RRRR-MM-DDTGG:MM`. Nigdy „jutro” ani „w piątek”, zawsze przelicz na datę. „Dziś” w pokazie to `dzis` z `data/demo.json` (2026-10-28).
 5. **Kwoty w złotych netto**, liczba całkowita: `14618`, nie `"14 618 zł"`. Brak kwoty: `null`.
-6. **Zmiana statusu** to dwie rzeczy: nowe `status` i wpis na końcu `historia` (`{ "status", "data" }`). Status musi istnieć w `demo.json`.
+6. **Zmiana statusu szansy** to dwie rzeczy: nowe `status` i wpis na końcu `historia` (`{ "status", "data" }`). Status musi istnieć w `demo.json`. Zadanie nie ma `historia`: zmianę statusu zadania zapisujesz wpisem `zmiana` w `aktywnosc`.
 7. **Twoje wpisy w aktywności** mają `"autor": "agent"`. Dopisujesz na końcu listy, starych wpisów nie zmieniasz.
-8. **Nowy rekord** dostaje kolejny wolny numer. Najpierw sprawdź, jakie pliki są w katalogu.
-9. **Odnośniki muszą istnieć**: `organizacja` szansy wskazuje plik w `data/organizacje/`, `uzytkownik` osobę z `uzytkownicy.json`.
+8. **Nowy rekord** dostaje kolejny wolny numer. Najpierw sprawdź, jakie pliki są w katalogu. Projekt: numer klienta i kolejna liczba tego klienta (`002.1`, `002.2`). Zadanie: numer projektu i kolejna liczba dwucyfrowa (`002.1-04`). Sprawdź oba katalogi: `data/projekty/` i `data/zadania/`.
+9. **Odnośniki muszą istnieć**: `organizacja` szansy i projektu wskazuje plik w `data/organizacje/`, `szansa` projektu plik w `data/szanse/`, `projekt` zadania plik w `data/projekty/`, `uzytkownik` osobę z `uzytkownicy.json`.
 10. **Po zmianach uruchom `node --test`.** Czerwony test oznacza błąd w danych. Popraw go, zanim powiesz, że gotowe.
 11. **Tylko dane fikcyjne.** E-maile w domenie `example.pl`, telefony z prefiksem `+48 000`. Repo jest publiczne.
 
@@ -24,9 +24,11 @@ Słownik pojęć: `CONTEXT.md`. Decyzje: `doc/decisions/`. Pomysły na rozbudow�
 |---|---|---|
 | Organizacja (klient) | `data/organizacje/NNN.json` | `002.json` |
 | Szansa | `data/szanse/SL-NNN.json` | `SL-014.json` |
+| Projekt klienta | `data/projekty/NNN.K.json` | `002.1.json` |
+| Zadanie | `data/zadania/NNN.K-ZZ.json` | `002.1-01.json` |
 | Użytkownik | pole `id` w `data/uzytkownicy.json` | `marek` |
 
-Numery mają trzy cyfry z zerami z przodu. Firmy i osoby prywatne mają wspólną numerację organizacji. Szczegóły: `doc/decisions/0002-numeracja.md`.
+Numery organizacji i szans mają trzy cyfry z zerami z przodu. Firmy i osoby prywatne mają wspólną numerację organizacji. Numer projektu zaczyna się od numeru klienta: `002.1` to pierwszy projekt organizacji 002, po `002.9` jest `002.10`. Numer zadania zaczyna się od numeru projektu: `002.1-01`. Szczegóły: `doc/decisions/0002-numeracja.md`, reguła w kodzie: `lib/numeracja.mjs`.
 
 ## Schematy plików
 
@@ -45,6 +47,26 @@ Numery mają trzy cyfry z zerami z przodu. Firmy i osoby prywatne mają wspóln�
 ```
 
 Statusy po kolei: `zapytanie`, `pomiar`, `projekt`, `oferta`, `negocjacje` (sekcja `aktywne`), `zamowienie` (wygrana) i `przegrana` (sekcja `zamkniete`).
+
+Projekty i zadania mają własne listy statusów w tym samym formacie (`id`, `nazwa`, `kolor`, `sekcja`) i szablon zadań nowego projektu:
+
+```json
+{
+  "statusy_projektow": [
+    { "id": "w-toku", "nazwa": "W toku", "kolor": "#2563eb", "sekcja": "aktywne" },
+    { "id": "zakonczony", "nazwa": "Zakończony", "kolor": "#059669", "sekcja": "zamkniete" }
+  ],
+  "statusy_zadan": [
+    { "id": "do-zrobienia", "nazwa": "Do zrobienia", "kolor": "#64748b", "sekcja": "aktywne" },
+    { "id": "w-toku", "nazwa": "W toku", "kolor": "#2563eb", "sekcja": "aktywne" },
+    { "id": "zrobione", "nazwa": "Zrobione", "kolor": "#059669", "sekcja": "zamkniete" }
+  ],
+  "szablon_zadan": ["Pomiar końcowy", "Produkcja", "Montaż"]
+}
+```
+
+- Status w sekcji `zamkniete` kończy sprawę: projekt trafia do „Zakończone”, zadanie liczy się jako zrobione i znika z „Na dziś”.
+- Nowy projekt dostaje pierwszy status z `statusy_projektow`, a jego zadania pierwszy status z `statusy_zadan`.
 
 ### `data/uzytkownicy.json`
 
@@ -105,6 +127,45 @@ Statusy po kolei: `zapytanie`, `pomiar`, `projekt`, `oferta`, `negocjacje` (sekc
 - `aktywnosc[].typ`: `notatka`, `telefon`, `spotkanie`, `mail` albo `zmiana`. Wpis `zmiana` dopisuje serwer, gdy ktoś zmieni pole na ekranie.
 - `aktywnosc[].autor`: id użytkownika albo `"agent"`.
 
+### `data/projekty/002.1.json`
+
+```json
+{
+  "nazwa": "Recepcja i aneks kuchenny",
+  "organizacja": "002",
+  "szansa": "SL-014",
+  "status": "w-toku",
+  "uzytkownik": "dawid",
+  "utworzono": "2026-10-28"
+}
+```
+
+- `organizacja`: ta sama co w numerze projektu (002.1 → `"002"`) i ta sama co w szansie.
+- `szansa`: wygrana szansa, z której powstał projekt. Jedna szansa ma najwyżej jeden projekt.
+- `uzytkownik`: opiekun projektu albo `null`.
+- Postęp („1 z 3”) ekran liczy z zadań, nie zapisujesz go w pliku.
+
+### `data/zadania/002.1-01.json`
+
+```json
+{
+  "projekt": "002.1",
+  "nazwa": "Pomiar końcowy na Zabłociu",
+  "status": "do-zrobienia",
+  "uzytkownik": "marek",
+  "data": "2026-10-30",
+  "utworzono": "2026-10-28",
+  "aktywnosc": [
+    { "data": "2026-10-28T10:15", "autor": "dawid", "typ": "zmiana", "zmiany": [{ "pole": "data", "przed": null, "po": "2026-10-30" }] }
+  ]
+}
+```
+
+- `projekt`: ten sam co w numerze zadania (002.1-01 → `"002.1"`).
+- `uzytkownik`: osoba od zadania albo `null` (wtedy zadanie z terminem jest w „Nieprzypisane”).
+- `data`: termin albo `null`. Zadanie bez terminu nie trafia do „Na dziś”.
+- `aktywnosc`: jak w szansie (te same typy i autorzy), może być pusta.
+
 ### `data/dashboard.json`
 
 ```json
@@ -123,13 +184,15 @@ Statusy po kolei: `zapytanie`, `pomiar`, `projekt`, `oferta`, `negocjacje` (sekc
 
 ## Co zapisuje ekran
 
-Ekran zmienia tylko szanse: status, priorytet, opiekuna i termin, a do tego dopisuje komentarze. Każda zmiana zostawia w `aktywnosc` wpis `typ: "zmiana"` z listą `pole: przed → po`. Zmiana statusu dopisuje też wpis w `historia`. Serwer zapisuje plik atomowo, a gdy plik zmienił się w tej samej chwili, czyta go ponownie i nakłada zmianę jeszcze raz.
+Ekran zmienia szanse (status, priorytet, opiekun, termin) i zadania (status, osoba, termin), a do tego dopisuje komentarze. Każda zmiana zostawia w `aktywnosc` wpis `typ: "zmiana"` z listą `pole: przed → po`. Zmiana statusu szansy dopisuje też wpis w `historia`. Serwer zapisuje plik atomowo, a gdy plik zmienił się w tej samej chwili, czyta go ponownie i nakłada zmianę jeszcze raz.
 
-Organizacje, użytkowników, dashboard i nowe szanse zmieniasz tylko Ty.
+Przycisk „Załóż projekt” na szansie w statusie „Zamówienie” zakłada projekt z kolejnym numerem klienta i zadania z `szablon_zadan` (bez terminów, osoba = opiekun szansy). Pliku szansy nie zmienia. Szansa, która ma projekt, drugiego nie dostanie.
+
+Organizacje, użytkowników, dashboard, nowe szanse, nazwy i statusy projektów oraz pojedyncze nowe zadania zmieniasz tylko Ty.
 
 ## Czego nie ruszać
 
-- Nie usuwaj plików z `data/`. Szansa, która upadła, dostaje status `przegrana`.
+- Nie usuwaj plików z `data/`. Szansa, która upadła, dostaje status `przegrana`. Projekt bez dalszej pracy dostaje status `zakonczony`.
 - Nie zmieniaj identyfikatorów (nazw plików) ani `id` statusów w `demo.json`. Stare rekordy przestałyby się zgadzać.
 - Nie zmieniaj `dzis` w `demo.json` bez prośby użytkownika. Na tej dacie stoi cały pokaz.
 - Nie poprawiaj testów po to, żeby przeszły.

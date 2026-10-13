@@ -1,0 +1,34 @@
+{
+  "projekt": "001.1",
+  "nazwa": "Pomiar końcowy",
+  "status": "zrobione",
+  "uzytkownik": "marek",
+  "data": "2026-07-08",
+  "utworzono": "2026-07-02",
+  "aktywnosc": [
+    {
+      "data": "2026-07-02T11:20",
+      "autor": "dawid",
+      "typ": "telefon",
+      "tresc": "Umówiony pomiar końcowy z Tomaszem na 8 lipca po 18:00, kiedy kawiarnia jest zamknięta."
+    },
+    {
+      "data": "2026-07-08T18:40",
+      "autor": "marek",
+      "typ": "spotkanie",
+      "tresc": "Pomiar końcowy. Wymiary z czerwca się zgadzają. Gniazdko pod ekspres trzeba przesunąć o 20 cm w lewo, Tomasz załatwi elektryka."
+    },
+    {
+      "data": "2026-07-08T19:05",
+      "autor": "marek",
+      "typ": "zmiana",
+      "zmiany": [
+        {
+          "pole": "status",
+          "przed": "do-zrobienia",
+          "po": "zrobione"
+        }
+      ]
+    }
+  ]
+}

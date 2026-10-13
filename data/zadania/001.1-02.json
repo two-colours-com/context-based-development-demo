@@ -1,0 +1,40 @@
+{
+  "projekt": "001.1",
+  "nazwa": "Produkcja",
+  "status": "zrobione",
+  "uzytkownik": "marek",
+  "data": "2026-07-31",
+  "utworzono": "2026-07-02",
+  "aktywnosc": [
+    {
+      "data": "2026-07-13T08:30",
+      "autor": "marek",
+      "typ": "zmiana",
+      "zmiany": [
+        {
+          "pole": "status",
+          "przed": "do-zrobienia",
+          "po": "w-toku"
+        }
+      ]
+    },
+    {
+      "data": "2026-07-20T15:10",
+      "autor": "marek",
+      "typ": "notatka",
+      "tresc": "Blat lady klejony z dębu, olejowanie w dwóch warstwach. Fronty bez uchwytów, na wcisk."
+    },
+    {
+      "data": "2026-07-31T16:00",
+      "autor": "marek",
+      "typ": "zmiana",
+      "zmiany": [
+        {
+          "pole": "status",
+          "przed": "w-toku",
+          "po": "zrobione"
+        }
+      ]
+    }
+  ]
+}

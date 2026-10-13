@@ -1,0 +1,16 @@
+{
+  "projekt": "010.1",
+  "nazwa": "Montaż w Zielonkach",
+  "status": "do-zrobienia",
+  "uzytkownik": "marek",
+  "data": null,
+  "utworzono": "2026-10-07",
+  "aktywnosc": [
+    {
+      "data": "2026-10-07T10:50",
+      "autor": "marek",
+      "typ": "notatka",
+      "tresc": "Klientka prosi o montaż 18 listopada. Termin wpiszemy, gdy ruszy produkcja."
+    }
+  ]
+}

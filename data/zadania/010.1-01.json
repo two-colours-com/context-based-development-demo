@@ -1,0 +1,39 @@
+{
+  "projekt": "010.1",
+  "nazwa": "Zamówienie płyt i okuć",
+  "status": "w-toku",
+  "uzytkownik": "dawid",
+  "data": "2026-10-26",
+  "utworzono": "2026-10-07",
+  "aktywnosc": [
+    {
+      "data": "2026-10-07T10:40",
+      "autor": "marek",
+      "typ": "notatka",
+      "tresc": "Lista materiałów z projektu Oli: płyta dębowa 18 mm, prowadnice z cichym domykiem, listwa LED nad blatem."
+    },
+    {
+      "data": "2026-10-19T09:15",
+      "autor": "dawid",
+      "typ": "telefon",
+      "tresc": "Hurtownia potwierdziła płytę. Prowadnice mają dojść do 26.10."
+    },
+    {
+      "data": "2026-10-19T09:20",
+      "autor": "dawid",
+      "typ": "zmiana",
+      "zmiany": [
+        {
+          "pole": "status",
+          "przed": "do-zrobienia",
+          "po": "w-toku"
+        },
+        {
+          "pole": "data",
+          "przed": "2026-10-19",
+          "po": "2026-10-26"
+        }
+      ]
+    }
+  ]
+}

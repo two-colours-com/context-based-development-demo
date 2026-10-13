@@ -88,6 +88,9 @@ a.row:hover { background: #fafafa; }
 .c-user { width: 9.5rem; }
 .c-city { width: 11rem; }
 .c-count { width: 5.5rem; text-align: right; }
+.c-progress { display: flex; align-items: center; gap: 8px; width: 8.5rem; }
+.c-progress .bar { flex: 1; height: 6px; }
+.c-progress .bar i { background: var(--primary); }
 .money { width: 7rem; text-align: right; font-variant-numeric: tabular-nums; }
 .st-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; background: var(--c); color: #fff; font-size: 12px; line-height: 16px; font-weight: 500; white-space: nowrap; }
 .dot { display: inline-block; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
@@ -124,6 +127,10 @@ select.sel { cursor: pointer; }
 .today-row.cols { padding: 8px 16px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-align: center; text-transform: uppercase; color: var(--muted-fg); }
 .today-main { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
 .today-main:hover .title { text-decoration: underline; text-underline-offset: 3px; }
+.today-row .id { width: 4.5rem; } /* numer zadania 002.1-01 jest dłuższy niż SL-014 */
+.today-row.broken { color: var(--danger); }
+/* Zadania na karcie projektu: nazwa, status, termin, osoba */
+.today-row.task-row { grid-template-columns: minmax(0, 1fr) 8rem 9rem 10.5rem; }
 
 /* ---- Karta rekordu ---- */
 .rh { display: flex; align-items: center; gap: 16px; padding: 20px; border-bottom: 1px solid var(--border); }
@@ -156,7 +163,9 @@ select.sel { cursor: pointer; }
 .fields-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; max-width: 48rem; }
 .fld { display: grid; align-content: start; gap: 6px; border-radius: 8px; }
 .fld-label { font-weight: 500; }
-.fld-row { display: flex; gap: 8px; }
+.fld-row { display: flex; align-items: center; gap: 8px; }
+.fld-text { min-height: 34px; display: flex; flex-direction: column; justify-content: center; }
+.fld-hint { min-width: 0; }
 .cs-aside { display: flex; flex: none; flex-direction: column; width: clamp(25rem, 39%, 38rem); border-left: 1px solid var(--border); }
 .cs-aside-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); }
 .cs-label { font-weight: 600; }

@@ -2,9 +2,9 @@
 
 ## W trakcie
 
-## Do zrobienia
+- [ ] Projekty klienta z zadaniami: [plan](plans/projekty-klienta/plan.md), gałąź `feat/projekty-klienta` (2026-10-28)
 
-- [ ] Projekty klienta z zadaniami: [plan](plans/projekty-klienta/plan.md) (2026-10-28)
+## Do zrobienia
 
 ## Zrobione
 
