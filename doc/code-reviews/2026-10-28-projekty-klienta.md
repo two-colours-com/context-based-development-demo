@@ -4,7 +4,7 @@ Przegląd robi agent, który nie pisał tego kodu (skill [critical-code-review](
 
 ## Runda 1 (2026-10-28), etapy 1-3
 
-Zakres: `git diff main...feat/projekty-klienta`, commit `86d874b` (bez commita `f7d8020` z `main` o escapowaniu formaterów).
+Zakres: `git diff main...feat/projekty-klienta`, commit `db31bb6` (bez commita `0852a98` z `main` o escapowaniu formaterów).
 
 Ocena: wszystkie kryteria „działa, jeśli…” z trzech etapów są spełnione. Zapis jest bezpieczny: zakładanie projektu idzie w kolejce, nie nadpisuje plików i liczy numer także z osieroconych zadań. Tekst z plików trafia na ekran jako tekst. Uwag blokujących nie ma. Trzy drobne dotyczą luk w testach i rzadkich przypadków, w których ekran i serwer oceniają sprawę inaczej.
 
@@ -108,7 +108,7 @@ Uwagi: 0 krytycznych, 0 ważnych, 3 drobne
 
 ## Runda 2 (2026-10-28), poprawki po rundzie 1
 
-Zakres: `git diff 86d874b -- server.mjs public/app.js tests/api.test.mjs doc/history/2026-10-28-projekty-klienta.md` (poprawki jeszcze bez commita) plus miejsca, które z nimi współpracują. Zmiany w `data/` (SL-014, pliki 002.1) zostały po klikaniu w aplikacji i nie są poprawkami, więc je pominąłem.
+Zakres: `git diff db31bb6 -- server.mjs public/app.js tests/api.test.mjs doc/history/2026-10-28-projekty-klienta.md` (poprawki jeszcze bez commita) plus miejsca, które z nimi współpracują. Zmiany w `data/` (SL-014, pliki 002.1) zostały po klikaniu w aplikacji i nie są poprawkami, więc je pominąłem.
 
 Ocena: D1 i D2 są naprawione zgodnie z decyzjami użytkownika. Nowe testy padają, gdy cofnąć poprawkę. Poprawki niczego obok nie zepsuły: komunikaty odmowy, ekran przy szablonie z błędem i `null` w `szablon_zadan` działają tak, jak opisuje kronika.
 
@@ -325,7 +325,7 @@ Ocena: wykonawca zmienił kierunek z rundy 1 na prostszy. Zapis dalej idzie od r
 - **Main wobec feat:**
   - `hold`, `busy()`, `render()`, `connect()`, `saveField` i obsługa zdarzeń są znak w znak takie same;
   - różnią się tylko `patchAttr` (na feat `data-col` i nazwa kolekcji w `id`) oraz wywołanie zapisu (`patchRecord` na feat, `patchDeal` na main);
-  - próbne scalenie main do feat (`git merge-file` od wspólnego commita `f7d8020`): `server.mjs` i `tests/dane.test.mjs` scalają się bez konfliktu i bez zmian w feat. `public/app.js` ma dwa konflikty, dokładnie w tych dwóch miejscach. Rozwiązanie: wersja z feat.
+  - próbne scalenie main do feat (`git merge-file` od wspólnego commita `0852a98`): `server.mjs` i `tests/dane.test.mjs` scalają się bez konfliktu i bez zmian w feat. `public/app.js` ma dwa konflikty, dokładnie w tych dwóch miejscach. Rozwiązanie: wersja z feat.
 - **`id` pól:** na wszystkich ekranach obu gałęzi każde pole z `data-patch` ma `id` i żadne `id` się nie powtarza. Szansa i zadanie w „Na dziś” nie zderzą się, bo `id` zawiera nazwę kolekcji.
 - **Ekran:** Chrome z polskim formatem daty, osobne kopie danych obu gałęzi. Kliknięcie odtworzone jak u człowieka: wciśnięcie, 100 ms, puszczenie. Zapisy liczyłem po żądaniach zapisu do serwera, skutek sprawdzałem w plikach kopii.
 
