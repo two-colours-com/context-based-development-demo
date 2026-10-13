@@ -12,14 +12,15 @@ const state = { db: {}, prev: {}, flash: new Set(), own: new Map(), drafts: new 
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const MONTHS = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'];
 const day = (iso) => String(iso ?? '').slice(0, 10);
-const fmtDate = (iso) => (iso ? day(iso).split('-').reverse().join('.') : '-');
-const fmtStamp = (iso) => (String(iso ?? '').length > 10 ? `${fmtDate(iso)}, ${iso.slice(11, 16)}` : fmtDate(iso));
+// Formatery zwracają gotowy fragment HTML, więc same escapują wartości z plików (w polu daty może być dowolny tekst).
+const fmtDate = (iso) => (iso ? esc(day(iso).split('-').reverse().join('.')) : '-');
+const fmtStamp = (iso) => (String(iso ?? '').length > 10 ? `${fmtDate(iso)}, ${esc(String(iso).slice(11, 16))}` : fmtDate(iso));
 const fmtLong = (iso) => {
   if (!iso) return '-';
   const [y, m, d] = day(iso).split('-').map(Number);
-  return `${d} ${MONTHS[m - 1]} ${y}`;
+  return esc(`${d} ${MONTHS[m - 1] ?? ''} ${y}`);
 };
-const money = (n) => (n == null ? '-' : `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} zł`);
+const money = (n) => (n == null ? '-' : esc(`${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} zł`));
 const plural = (n, one, few, many) => (n === 1 ? one : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100) ? few : many);
 const norm = (s) => String(s ?? '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/ł/g, 'l');
 const initials = (name) => String(name ?? '?').split(/\s+/).filter(Boolean).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
