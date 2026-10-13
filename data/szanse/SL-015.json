@@ -1,0 +1,56 @@
+{
+  "nazwa": "Regały na zaplecze",
+  "organizacja": "001",
+  "status": "projekt",
+  "priorytet": "sredni",
+  "wartosc": 4800,
+  "uzytkownik": "marek",
+  "data": "2026-10-29",
+  "utworzono": "2026-09-15",
+  "historia": [
+    {
+      "status": "zapytanie",
+      "data": "2026-09-15T10:30"
+    },
+    {
+      "status": "pomiar",
+      "data": "2026-09-22T18:30"
+    },
+    {
+      "status": "projekt",
+      "data": "2026-10-06T09:00"
+    }
+  ],
+  "aktywnosc": [
+    {
+      "data": "2026-09-15T10:30",
+      "autor": "dawid",
+      "typ": "telefon",
+      "tresc": "Tomasz wraca do regałów na zaplecze. Worki z kawą i kartony z kubkami, chce porządku przed zimą."
+    },
+    {
+      "data": "2026-09-22T18:30",
+      "autor": "marek",
+      "typ": "spotkanie",
+      "tresc": "Pomiar zaplecza po 18:00. Wnęka 210 × 240 cm, wilgoć przy podłodze, regał na nóżkach."
+    },
+    {
+      "data": "2026-10-06T09:00",
+      "autor": "ola",
+      "typ": "notatka",
+      "tresc": "Projekt: trzy moduły z płyty, półki na 60 kg, dolna półka 15 cm nad podłogą. Wstępnie 4 800 zł netto."
+    },
+    {
+      "data": "2026-10-21T16:40",
+      "autor": "marek",
+      "typ": "mail",
+      "tresc": "Wysłałem Tomaszowi rysunek. Pytam, czy montaż może być w poniedziałek po 18:00."
+    },
+    {
+      "data": "2026-10-22T08:15",
+      "autor": "marek",
+      "typ": "mail",
+      "tresc": "Tomasz: rysunek pasuje, poniedziałek od 18:30. Pyta o cenę. Wycena do 29.10."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "nazwa": "Szafy wnękowe",
+  "organizacja": "004",
+  "status": "przegrana",
+  "priorytet": null,
+  "wartosc": 7400,
+  "uzytkownik": "marek",
+  "data": "2026-03-23",
+  "utworzono": "2026-02-26",
+  "historia": [
+    {
+      "status": "zapytanie",
+      "data": "2026-02-26T11:20"
+    },
+    {
+      "status": "pomiar",
+      "data": "2026-03-03T10:00"
+    },
+    {
+      "status": "oferta",
+      "data": "2026-03-09T14:00"
+    },
+    {
+      "status": "przegrana",
+      "data": "2026-03-23T09:30"
+    }
+  ],
+  "aktywnosc": [
+    {
+      "data": "2026-02-26T11:20",
+      "autor": "dawid",
+      "typ": "mail",
+      "tresc": "Pani Joanna pyta o dwie szafy wnękowe z drzwiami przesuwnymi do domu w Wieliczce."
+    },
+    {
+      "data": "2026-03-03T10:00",
+      "autor": "marek",
+      "typ": "spotkanie",
+      "tresc": "Pomiar. Dwie wnęki: 180 i 210 cm, wysokość 260 cm."
+    },
+    {
+      "data": "2026-03-09T14:00",
+      "autor": "marek",
+      "typ": "mail",
+      "tresc": "Oferta wysłana: dwie szafy z płyty 18 mm, 7 400 zł netto, montaż w cenie mebli."
+    },
+    {
+      "data": "2026-03-23T09:30",
+      "autor": "marek",
+      "typ": "telefon",
+      "tresc": "Klientka wybrała tańszą ofertę z sieciówki, około 5 900 zł. Jedyny powód: cena."
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "nazwa": "Lada recepcyjna i aneks na nowe piętro",
+  "organizacja": "006",
+  "status": "negocjacje",
+  "priorytet": "wysoki",
+  "wartosc": 18900,
+  "uzytkownik": "dawid",
+  "data": "2026-10-28",
+  "utworzono": "2026-09-10",
+  "historia": [
+    {
+      "status": "zapytanie",
+      "data": "2026-09-10T11:00"
+    },
+    {
+      "status": "pomiar",
+      "data": "2026-09-17T10:00"
+    },
+    {
+      "status": "projekt",
+      "data": "2026-09-24T15:00"
+    },
+    {
+      "status": "oferta",
+      "data": "2026-10-02T13:00"
+    },
+    {
+      "status": "negocjacje",
+      "data": "2026-10-16T10:30"
+    }
+  ],
+  "aktywnosc": [
+    {
+      "data": "2026-09-10T11:00",
+      "autor": "dawid",
+      "typ": "mail",
+      "tresc": "Michał Strzelecki z Coworkingu Strych. Nowe piętro: lada recepcyjna i aneks kuchenny dla 40 osób."
+    },
+    {
+      "data": "2026-09-17T10:00",
+      "autor": "marek",
+      "typ": "spotkanie",
+      "tresc": "Pomiar na nowym piętrze. Recepcja 360 cm, aneks 480 cm, dwa gniazda do przeniesienia."
+    },
+    {
+      "data": "2026-09-24T15:00",
+      "autor": "ola",
+      "typ": "notatka",
+      "tresc": "Projekt lady z frontem z listew dębowych. Aneks biały mat, blat z konglomeratu."
+    },
+    {
+      "data": "2026-10-02T13:00",
+      "autor": "dawid",
+      "typ": "mail",
+      "tresc": "Oferta: lada 8 400 zł, aneks 7 800 zł, montaż w weekend 2 700 zł. Razem 18 900 zł netto."
+    },
+    {
+      "data": "2026-10-16T10:30",
+      "autor": "dawid",
+      "typ": "telefon",
+      "tresc": "Michał prosi o 5% rabatu przy płatności całości z góry. Odpowiem do 28.10."
+    },
+    {
+      "data": "2026-10-16T10:45",
+      "autor": "agent",
+      "typ": "notatka",
+      "tresc": "Rabat 5% to 945 zł, po rabacie 17 955 zł netto. Rabat przy przedpłacie dawaliśmy już wcześniej, decyzja po stronie Dawida."
+    },
+    {
+      "data": "2026-10-27T09:12",
+      "autor": "agent",
+      "typ": "mail",
+      "tresc": "Michał pyta mailem, czy jest decyzja w sprawie rabatu. Chcą podpisać zamówienie w tym tygodniu."
+    }
+  ]
+}

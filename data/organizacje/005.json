@@ -1,0 +1,15 @@
+{
+  "nazwa": "Biuro Rachunkowe Rubryka",
+  "typ": "firma",
+  "branza": "Biuro rachunkowe",
+  "miasto": "Kraków",
+  "dzielnica": "Podgórze",
+  "osoba_kontaktowa": {
+    "imie_nazwisko": "Beata Sowa",
+    "stanowisko": "Właścicielka",
+    "email": "beata.sowa@example.pl",
+    "telefon": "+48 000 100 205"
+  },
+  "uwagi": "Archiwum na około 300 segregatorów. Wejście od podwórza.",
+  "dodano": "2026-09-08"
+}

@@ -1,0 +1,64 @@
+{
+  "nazwa": "Biurko i regał do domowego biura",
+  "organizacja": "010",
+  "status": "zamowienie",
+  "priorytet": null,
+  "wartosc": 11200,
+  "uzytkownik": "marek",
+  "data": "2026-10-07",
+  "utworzono": "2026-08-18",
+  "historia": [
+    {
+      "status": "zapytanie",
+      "data": "2026-08-18T12:00"
+    },
+    {
+      "status": "pomiar",
+      "data": "2026-08-25T10:00"
+    },
+    {
+      "status": "projekt",
+      "data": "2026-09-04T09:00"
+    },
+    {
+      "status": "oferta",
+      "data": "2026-09-15T13:00"
+    },
+    {
+      "status": "zamowienie",
+      "data": "2026-10-07T10:20"
+    }
+  ],
+  "aktywnosc": [
+    {
+      "data": "2026-08-18T12:00",
+      "autor": "marek",
+      "typ": "telefon",
+      "tresc": "Klientka pracuje z domu. Biurko na całą ścianę i regał na książki."
+    },
+    {
+      "data": "2026-08-25T10:00",
+      "autor": "marek",
+      "typ": "spotkanie",
+      "tresc": "Pomiar w Zielonkach. Ściana 340 cm, okno z lewej strony."
+    },
+    {
+      "data": "2026-09-04T09:00",
+      "autor": "ola",
+      "typ": "notatka",
+      "tresc": "Projekt: blat 300 cm, regał do sufitu, szafka na drukarkę."
+    },
+    {
+      "data": "2026-09-15T13:00",
+      "autor": "marek",
+      "typ": "mail",
+      "tresc": "Oferta wysłana: 11 200 zł netto z montażem."
+    },
+    {
+      "data": "2026-10-07T10:20",
+      "autor": "marek",
+      "typ": "telefon",
+      "tresc": "Klientka zamawia. Zaliczka wpłynęła, montaż 18 listopada."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "nazwa": "Kuchnia L 420 cm",
+  "organizacja": "003",
+  "status": "zamowienie",
+  "priorytet": null,
+  "wartosc": 15650,
+  "uzytkownik": "marek",
+  "data": "2025-11-20",
+  "utworzono": "2025-10-28",
+  "historia": [
+    {
+      "status": "zapytanie",
+      "data": "2025-10-28T10:05"
+    },
+    {
+      "status": "pomiar",
+      "data": "2025-11-05T09:00"
+    },
+    {
+      "status": "oferta",
+      "data": "2025-11-14T15:30"
+    },
+    {
+      "status": "zamowienie",
+      "data": "2025-11-20T12:10"
+    }
+  ],
+  "aktywnosc": [
+    {
+      "data": "2025-10-28T10:05",
+      "autor": "dawid",
+      "typ": "telefon",
+      "tresc": "Pan Piotr dzwoni z polecenia. Kuchnia w zabudowie L, około 4 m, białe fronty lakierowane."
+    },
+    {
+      "data": "2025-11-05T09:00",
+      "autor": "marek",
+      "typ": "spotkanie",
+      "tresc": "Pomiar u klienta. Ściana główna 420 cm, krótsze ramię 180 cm. Blat dąb olejowany."
+    },
+    {
+      "data": "2025-11-14T15:30",
+      "autor": "marek",
+      "typ": "mail",
+      "tresc": "Oferta wysłana: zabudowa 9 800 zł, blat 2 650 zł, montaż 2 dni 3 200 zł. Razem 15 650 zł netto."
+    },
+    {
+      "data": "2025-11-20T12:10",
+      "autor": "dawid",
+      "typ": "telefon",
+      "tresc": "Klient przyjmuje ofertę. Zaliczka 40% przy zamówieniu, termin 6 tygodni."
+    },
+    {
+      "data": "2026-01-09T17:00",
+      "autor": "marek",
+      "typ": "notatka",
+      "tresc": "Montaż zakończony. Klient zadowolony, wspomniał o przedpokoju w przyszłym roku."
+    }
+  ]
+}

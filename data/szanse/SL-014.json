@@ -1,0 +1,64 @@
+{
+  "nazwa": "Recepcja i aneks kuchenny",
+  "organizacja": "002",
+  "status": "oferta",
+  "priorytet": "wysoki",
+  "wartosc": 14618,
+  "uzytkownik": "dawid",
+  "data": "2026-10-26",
+  "utworzono": "2026-10-12",
+  "historia": [
+    {
+      "status": "zapytanie",
+      "data": "2026-10-12T09:20"
+    },
+    {
+      "status": "oferta",
+      "data": "2026-10-12T09:42"
+    }
+  ],
+  "aktywnosc": [
+    {
+      "data": "2026-10-12T09:20",
+      "autor": "agent",
+      "typ": "notatka",
+      "tresc": "Zapytanie mailem od Anny Wiśniewskiej z Firmy Demo: lada recepcyjna około 3 m i aneks kuchenny na ścianie 4 m do nowego biura na Zabłociu. Montaż tylko w sobotę. Szansa założona."
+    },
+    {
+      "data": "2026-10-12T09:31",
+      "autor": "agent",
+      "typ": "notatka",
+      "tresc": "Karta wyceny gotowa. Trzy pytania: wysokość lady, blat w aneksie, dopłata za montaż w sobotę."
+    },
+    {
+      "data": "2026-10-12T09:36",
+      "autor": "dawid",
+      "typ": "notatka",
+      "tresc": "Blat w aneksie z konglomeratu. Za montaż w sobotę doliczamy 20%. Lada 300 × 110 cm."
+    },
+    {
+      "data": "2026-10-12T09:40",
+      "autor": "agent",
+      "typ": "notatka",
+      "tresc": "Oferta SL-014 gotowa: lada 3 665 zł, aneks 6 633 zł, montaż w sobotę 4 320 zł. Razem 14 618 zł netto."
+    },
+    {
+      "data": "2026-10-12T09:42",
+      "autor": "agent",
+      "typ": "mail",
+      "tresc": "Po zgodzie Dawida wysłana oferta do Anny: „Dzień dobry, w załączniku oferta na ladę i aneks. Montaż w sobotę, datę ustalimy razem.”"
+    },
+    {
+      "data": "2026-10-20T11:15",
+      "autor": "dawid",
+      "typ": "telefon",
+      "tresc": "Anna: zarząd ogląda ofertę, decyzja do końca miesiąca. Pyta, czy zdążymy w listopadzie."
+    },
+    {
+      "data": "2026-10-23T14:05",
+      "autor": "agent",
+      "typ": "mail",
+      "tresc": "Mail od Anny: zarząd jest na tak, czekają na podpis prezesa. Pyta, czy montaż jest możliwy w sobotę 14 listopada, a jeśli nie, to 21 listopada. Przeprowadzka 16 listopada. Odpowiedź do 26.10."
+    }
+  ]
+}

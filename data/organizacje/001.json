@@ -1,0 +1,15 @@
+{
+  "nazwa": "Kawiarnia Ziarno",
+  "typ": "firma",
+  "branza": "Kawiarnia",
+  "miasto": "Kraków",
+  "dzielnica": "Kazimierz",
+  "osoba_kontaktowa": {
+    "imie_nazwisko": "Tomasz Wrona",
+    "stanowisko": "Właściciel",
+    "email": "tomasz.wrona@example.pl",
+    "telefon": "+48 000 100 201"
+  },
+  "uwagi": "Montaż tylko po 18:00, kiedy kawiarnia jest zamknięta. Lubią dąb olejowany i fronty bez uchwytów.",
+  "dodano": "2026-06-08"
+}

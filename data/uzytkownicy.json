@@ -1,0 +1,17 @@
+[
+  {
+    "id": "dawid",
+    "imie_nazwisko": "Dawid Lipiński",
+    "rola": "Właściciel"
+  },
+  {
+    "id": "marek",
+    "imie_nazwisko": "Marek Jaworski",
+    "rola": "Stolarz, pomiary i wyceny"
+  },
+  {
+    "id": "ola",
+    "imie_nazwisko": "Ola Grabowska",
+    "rola": "Projektantka"
+  }
+]

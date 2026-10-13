@@ -1,0 +1,15 @@
+{
+  "nazwa": "Szkoła Językowa Słówko",
+  "typ": "firma",
+  "branza": "Szkoła językowa",
+  "miasto": "Kraków",
+  "dzielnica": "Krowodrza",
+  "osoba_kontaktowa": {
+    "imie_nazwisko": "Ewa Lis",
+    "stanowisko": "Dyrektorka",
+    "email": "ewa.lis@example.pl",
+    "telefon": "+48 000 100 207"
+  },
+  "uwagi": "Decyzje zapadają na radzie szkoły. Montaż po lekcjach albo w weekend.",
+  "dodano": "2026-09-22"
+}

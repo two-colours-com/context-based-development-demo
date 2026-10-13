@@ -1,0 +1,76 @@
+{
+  "karty": [
+    {
+      "id": "w-grze",
+      "typ": "liczba",
+      "tytul": "Szanse w grze",
+      "szer": 4,
+      "cfg": {
+        "miara": "ile",
+        "statusy": [
+          "zapytanie",
+          "pomiar",
+          "projekt",
+          "oferta",
+          "negocjacje"
+        ]
+      }
+    },
+    {
+      "id": "oferty",
+      "typ": "liczba",
+      "tytul": "Wartość ofert w grze",
+      "szer": 4,
+      "cfg": {
+        "miara": "suma",
+        "statusy": [
+          "oferta",
+          "negocjacje"
+        ]
+      }
+    },
+    {
+      "id": "wygrane",
+      "typ": "liczba",
+      "tytul": "Wygrane zamówienia",
+      "szer": 4,
+      "cfg": {
+        "miara": "suma",
+        "statusy": [
+          "zamowienie"
+        ]
+      }
+    },
+    {
+      "id": "etapy",
+      "typ": "statusy",
+      "tytul": "Etapy szans w grze",
+      "szer": 5,
+      "cfg": {
+        "statusy": [
+          "zapytanie",
+          "pomiar",
+          "projekt",
+          "oferta",
+          "negocjacje"
+        ]
+      }
+    },
+    {
+      "id": "najwieksze",
+      "typ": "lista",
+      "tytul": "Największe szanse w grze",
+      "szer": 7,
+      "cfg": {
+        "statusy": [
+          "zapytanie",
+          "pomiar",
+          "projekt",
+          "oferta",
+          "negocjacje"
+        ],
+        "limit": 5
+      }
+    }
+  ]
+}

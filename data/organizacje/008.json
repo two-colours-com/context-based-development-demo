@@ -1,0 +1,15 @@
+{
+  "nazwa": "Kamil Nowicki",
+  "typ": "osoba prywatna",
+  "branza": null,
+  "miasto": "Niepołomice",
+  "dzielnica": null,
+  "osoba_kontaktowa": {
+    "imie_nazwisko": "Kamil Nowicki",
+    "stanowisko": null,
+    "email": "kamil.nowicki@example.pl",
+    "telefon": "+48 000 100 208"
+  },
+  "uwagi": "Poddasze ze skosem.",
+  "dodano": "2026-10-27"
+}

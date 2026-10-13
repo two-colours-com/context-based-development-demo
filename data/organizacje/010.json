@@ -1,0 +1,15 @@
+{
+  "nazwa": "Katarzyna Wójcik",
+  "typ": "osoba prywatna",
+  "branza": null,
+  "miasto": "Zielonki",
+  "dzielnica": null,
+  "osoba_kontaktowa": {
+    "imie_nazwisko": "Katarzyna Wójcik",
+    "stanowisko": null,
+    "email": "katarzyna.wojcik@example.pl",
+    "telefon": "+48 000 100 210"
+  },
+  "uwagi": "Pracuje z domu.",
+  "dodano": "2026-08-18"
+}

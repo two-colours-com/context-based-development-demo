@@ -1,0 +1,50 @@
+{
+  "nazwa": "Kuchnia z wyspą",
+  "organizacja": "009",
+  "status": "projekt",
+  "priorytet": "wysoki",
+  "wartosc": 24500,
+  "uzytkownik": "marek",
+  "data": "2026-10-24",
+  "utworzono": "2026-09-03",
+  "historia": [
+    {
+      "status": "zapytanie",
+      "data": "2026-09-03T16:00"
+    },
+    {
+      "status": "pomiar",
+      "data": "2026-09-12T10:00"
+    },
+    {
+      "status": "projekt",
+      "data": "2026-09-29T11:00"
+    }
+  ],
+  "aktywnosc": [
+    {
+      "data": "2026-09-03T16:00",
+      "autor": "dawid",
+      "typ": "telefon",
+      "tresc": "Pani Magdalena kupiła mieszkanie na Ruczaju. Kuchnia otwarta na salon, chce wyspę."
+    },
+    {
+      "data": "2026-09-12T10:00",
+      "autor": "marek",
+      "typ": "spotkanie",
+      "tresc": "Pomiar. Ściana 390 cm, wyspa 180 × 90 cm, przyłącze wody w podłodze do sprawdzenia."
+    },
+    {
+      "data": "2026-09-29T11:00",
+      "autor": "ola",
+      "typ": "notatka",
+      "tresc": "Projekt w dwóch wersjach: fronty z forniru dębowego albo lakier grafit. Wstępnie 24 500 zł netto."
+    },
+    {
+      "data": "2026-10-15T18:00",
+      "autor": "ola",
+      "typ": "spotkanie",
+      "tresc": "Klientka wybiera fornir. Prosi o wycenę z blatem z konglomeratu na wyspie."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "nazwa": "Coworking Strych",
+  "typ": "firma",
+  "branza": "Coworking",
+  "miasto": "Kraków",
+  "dzielnica": "Grzegórzki",
+  "osoba_kontaktowa": {
+    "imie_nazwisko": "Michał Strzelecki",
+    "stanowisko": "Community manager",
+    "email": "michal.strzelecki@example.pl",
+    "telefon": "+48 000 100 206"
+  },
+  "uwagi": "Otwierają nowe piętro dla 40 osób. Montaż tylko w weekend.",
+  "dodano": "2026-09-10"
+}

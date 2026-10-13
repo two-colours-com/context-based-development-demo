@@ -1,0 +1,15 @@
+{
+  "nazwa": "Magdalena Zając",
+  "typ": "osoba prywatna",
+  "branza": null,
+  "miasto": "Kraków",
+  "dzielnica": "Ruczaj",
+  "osoba_kontaktowa": {
+    "imie_nazwisko": "Magdalena Zając",
+    "stanowisko": null,
+    "email": "magdalena.zajac@example.pl",
+    "telefon": "+48 000 100 209"
+  },
+  "uwagi": "Nowe mieszkanie, kuchnia otwarta na salon.",
+  "dodano": "2026-09-03"
+}

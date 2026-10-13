@@ -1,0 +1,15 @@
+{
+  "nazwa": "Joanna Mazur",
+  "typ": "osoba prywatna",
+  "branza": null,
+  "miasto": "Wieliczka",
+  "dzielnica": null,
+  "osoba_kontaktowa": {
+    "imie_nazwisko": "Joanna Mazur",
+    "stanowisko": null,
+    "email": "joanna.mazur@example.pl",
+    "telefon": "+48 000 100 204"
+  },
+  "uwagi": "Szafy wnękowe w marcu 2026. Wybrała tańszą ofertę.",
+  "dodano": "2026-02-26"
+}

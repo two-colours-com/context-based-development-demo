@@ -1,0 +1,24 @@
+{
+  "nazwa": "Garderoba na poddaszu",
+  "organizacja": "008",
+  "status": "zapytanie",
+  "priorytet": null,
+  "wartosc": null,
+  "uzytkownik": null,
+  "data": "2026-10-28",
+  "utworzono": "2026-10-27",
+  "historia": [
+    {
+      "status": "zapytanie",
+      "data": "2026-10-27T20:20"
+    }
+  ],
+  "aktywnosc": [
+    {
+      "data": "2026-10-27T20:20",
+      "autor": "agent",
+      "typ": "notatka",
+      "tresc": "Nowe zapytanie mailem od Kamila Nowickiego: garderoba pod skosem na poddaszu w Niepołomicach, ściana około 5 m, skos od 1,2 do 2,6 m. Założona organizacja 008 i szansa. Czeka na opiekuna."
+    }
+  ]
+}

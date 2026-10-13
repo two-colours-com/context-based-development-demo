@@ -1,0 +1,15 @@
+{
+  "nazwa": "Piotr Kalinowski",
+  "typ": "osoba prywatna",
+  "branza": null,
+  "miasto": "Kraków",
+  "dzielnica": "Bronowice",
+  "osoba_kontaktowa": {
+    "imie_nazwisko": "Piotr Kalinowski",
+    "stanowisko": null,
+    "email": "piotr.kalinowski@example.pl",
+    "telefon": "+48 000 100 203"
+  },
+  "uwagi": "Przyszedł z polecenia. Kuchnia w 2025 roku, teraz wraca z przedpokojem.",
+  "dodano": "2025-10-28"
+}

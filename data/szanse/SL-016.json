@@ -1,0 +1,40 @@
+{
+  "nazwa": "Szafy na dokumenty",
+  "organizacja": "005",
+  "status": "pomiar",
+  "priorytet": "sredni",
+  "wartosc": null,
+  "uzytkownik": "marek",
+  "data": "2026-10-28",
+  "utworzono": "2026-09-08",
+  "historia": [
+    {
+      "status": "zapytanie",
+      "data": "2026-09-08T09:15"
+    },
+    {
+      "status": "pomiar",
+      "data": "2026-10-14T12:00"
+    }
+  ],
+  "aktywnosc": [
+    {
+      "data": "2026-09-08T09:15",
+      "autor": "dawid",
+      "typ": "mail",
+      "tresc": "Beata Sowa pyta o szafy na segregatory do archiwum. Około 300 segregatorów, pokój 3 × 4 m."
+    },
+    {
+      "data": "2026-09-09T10:00",
+      "autor": "agent",
+      "typ": "notatka",
+      "tresc": "Szacunek z cennika 2026: 5 800 do 6 600 zł netto bez montażu. Bez pomiaru nie podajemy ceny."
+    },
+    {
+      "data": "2026-10-14T12:00",
+      "autor": "marek",
+      "typ": "telefon",
+      "tresc": "Pomiar umówiony na 28.10, godz. 9:00. Biuro na Podgórzu, wejście od podwórza."
+    }
+  ]
+}

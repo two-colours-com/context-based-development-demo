@@ -1,0 +1,54 @@
+{
+  "firma": {
+    "nazwa": "Stolarnia Dąb",
+    "podpis": "Meble na wymiar, Kraków"
+  },
+  "dzis": "2026-10-28",
+  "biezacy_uzytkownik": "dawid",
+  "statusy": [
+    {
+      "id": "zapytanie",
+      "nazwa": "Zapytanie",
+      "kolor": "#64748b",
+      "sekcja": "aktywne"
+    },
+    {
+      "id": "pomiar",
+      "nazwa": "Pomiar",
+      "kolor": "#d97706",
+      "sekcja": "aktywne"
+    },
+    {
+      "id": "projekt",
+      "nazwa": "Projekt",
+      "kolor": "#0d9488",
+      "sekcja": "aktywne"
+    },
+    {
+      "id": "oferta",
+      "nazwa": "Oferta",
+      "kolor": "#2563eb",
+      "sekcja": "aktywne"
+    },
+    {
+      "id": "negocjacje",
+      "nazwa": "Negocjacje",
+      "kolor": "#7c3aed",
+      "sekcja": "aktywne"
+    },
+    {
+      "id": "zamowienie",
+      "nazwa": "Zamówienie",
+      "kolor": "#059669",
+      "sekcja": "zamkniete",
+      "rola": "wygrana"
+    },
+    {
+      "id": "przegrana",
+      "nazwa": "Przegrana",
+      "kolor": "#e11d48",
+      "sekcja": "zamkniete",
+      "rola": "przegrana"
+    }
+  ]
+}

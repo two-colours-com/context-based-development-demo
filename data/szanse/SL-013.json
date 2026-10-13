@@ -1,0 +1,60 @@
+{
+  "nazwa": "Lada i półki",
+  "organizacja": "001",
+  "status": "zamowienie",
+  "priorytet": null,
+  "wartosc": 9900,
+  "uzytkownik": "marek",
+  "data": "2026-07-02",
+  "utworzono": "2026-06-08",
+  "historia": [
+    {
+      "status": "zapytanie",
+      "data": "2026-06-08T13:00"
+    },
+    {
+      "status": "pomiar",
+      "data": "2026-06-12T18:30"
+    },
+    {
+      "status": "oferta",
+      "data": "2026-06-18T10:00"
+    },
+    {
+      "status": "zamowienie",
+      "data": "2026-07-02T11:00"
+    }
+  ],
+  "aktywnosc": [
+    {
+      "data": "2026-06-08T13:00",
+      "autor": "dawid",
+      "typ": "telefon",
+      "tresc": "Tomasz Wrona, właściciel Kawiarni Ziarno na Kazimierzu. Chce nowej lady i półek na kawę."
+    },
+    {
+      "data": "2026-06-12T18:30",
+      "autor": "marek",
+      "typ": "spotkanie",
+      "tresc": "Pomiar po zamknięciu kawiarni. Ściana pod ladę 252 cm, wysokość lady 105 cm, ściana na półki 180 cm."
+    },
+    {
+      "data": "2026-06-18T10:00",
+      "autor": "marek",
+      "typ": "mail",
+      "tresc": "Oferta: lada 240 cm z dębu olejowanego 6 900 zł, trzy półki 1 200 zł, montaż po 18:00 1 800 zł. Razem 9 900 zł netto."
+    },
+    {
+      "data": "2026-07-02T11:00",
+      "autor": "dawid",
+      "typ": "telefon",
+      "tresc": "Akceptacja oferty. Blat z dębu zamiast laminatu. Montaż 20 i 21 sierpnia, po 18:00."
+    },
+    {
+      "data": "2026-08-21T22:10",
+      "autor": "marek",
+      "typ": "notatka",
+      "tresc": "Montaż zakończony. Tomasz pyta o regały na zaplecze."
+    }
+  ]
+}

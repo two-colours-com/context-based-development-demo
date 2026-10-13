@@ -1,0 +1,15 @@
+{
+  "nazwa": "Firma Demo",
+  "typ": "firma",
+  "branza": "Biuro, około 25 osób",
+  "miasto": "Kraków",
+  "dzielnica": "Zabłocie",
+  "osoba_kontaktowa": {
+    "imie_nazwisko": "Anna Wiśniewska",
+    "stanowisko": "Office manager",
+    "email": "anna.wisniewska@example.pl",
+    "telefon": "+48 000 100 202"
+  },
+  "uwagi": "W listopadzie przenoszą biuro na Zabłocie. W tygodniu pracują, montaż tylko w sobotę.",
+  "dodano": "2026-10-12"
+}

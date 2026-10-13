@@ -1,0 +1,50 @@
+{
+  "nazwa": "Szafki do pokoju nauczycielskiego",
+  "organizacja": "007",
+  "status": "oferta",
+  "priorytet": "sredni",
+  "wartosc": 8700,
+  "uzytkownik": "dawid",
+  "data": "2026-11-03",
+  "utworzono": "2026-09-22",
+  "historia": [
+    {
+      "status": "zapytanie",
+      "data": "2026-09-22T09:40"
+    },
+    {
+      "status": "pomiar",
+      "data": "2026-09-30T15:00"
+    },
+    {
+      "status": "oferta",
+      "data": "2026-10-20T10:00"
+    }
+  ],
+  "aktywnosc": [
+    {
+      "data": "2026-09-22T09:40",
+      "autor": "dawid",
+      "typ": "mail",
+      "tresc": "Ewa Lis pyta o szafki dla 12 nauczycieli i mały aneks z czajnikiem."
+    },
+    {
+      "data": "2026-09-30T15:00",
+      "autor": "marek",
+      "typ": "spotkanie",
+      "tresc": "Pomiar po lekcjach. Ściana 380 cm, okno na środku, szafki pod oknem do 80 cm wysokości."
+    },
+    {
+      "data": "2026-10-20T10:00",
+      "autor": "agent",
+      "typ": "mail",
+      "tresc": "Po zgodzie Dawida wysłana oferta: 12 szafek z zamkami 6 300 zł, aneks 1 600 zł, montaż 800 zł. Razem 8 700 zł netto."
+    },
+    {
+      "data": "2026-10-20T10:05",
+      "autor": "dawid",
+      "typ": "notatka",
+      "tresc": "Szkoła decyduje na radzie 3 listopada. Wtedy dzwonię."
+    }
+  ]
+}
