@@ -102,7 +102,10 @@ function rewrite(file, change) {
 /* ---- Zmiana szansy z ekranu: biała lista pól, każda zmiana zostawia ślad w aktywności ---- */
 
 const PRIORITIES = ['wysoki', 'sredni', 'niski'];
-const validDay = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) && new Date(Date.parse(`${v}T00:00:00Z`) || 0).toISOString().slice(0, 10) === v;
+// Dzień z kalendarza z lat 2000-2099. Przy wpisywaniu roku z klawiatury przeglądarka oddaje po drodze 0002-10-28,
+// 0020-10-28 itd. Taki rok to niedokończone pole albo literówka, a nie termin.
+const validDay = (v) => typeof v === 'string' && /^20\d{2}-\d{2}-\d{2}$/.test(v) && new Date(Date.parse(`${v}T00:00:00Z`) || 0).toISOString().slice(0, 10) === v;
+const DAY_ERROR = 'Niepoprawny termin: podaj dzień z lat 2000-2099 w formacie RRRR-MM-DD, np. 2026-10-28.';
 const isObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 
 async function patchDeal(id, body) {
@@ -119,8 +122,8 @@ async function patchDeal(id, body) {
     data: (v) => v === null || validDay(v),
   };
   for (const [key, value] of Object.entries(zmiany)) {
-    if (!checks[key]) throw new ApiError(400, `Pola „${key}” nie zmienia się z ekranu.`);
-    if (!checks[key](value)) throw new ApiError(400, `Niepoprawna wartość pola „${key}”.`);
+    if (!Object.hasOwn(checks, key)) throw new ApiError(400, `Pola „${key}” nie zmienia się z ekranu.`);
+    if (!checks[key](value)) throw new ApiError(400, key === 'data' ? DAY_ERROR : `Niepoprawna wartość pola „${key}”.`);
   }
   const komentarz = typeof body.komentarz === 'string' ? body.komentarz.trim().slice(0, 5000) : '';
 

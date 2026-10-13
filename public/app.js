@@ -109,7 +109,8 @@ function personBox(o, hot) {
 
 // Kontrolki szansy: każda zmiana od razu idzie do pliku (PATCH), a serwer dopisuje ślad w aktywności.
 const opt = (value, label, current) => `<option value="${esc(value)}"${value === (current ?? '') ? ' selected' : ''}>${esc(label)}</option>`;
-const patchAttr = (s, field) => `data-patch="${esc(s.id)}" data-field="${field}"`;
+// Stałe `id` pola: render() oddaje mu fokus po przerysowaniu.
+const patchAttr = (s, field) => `id="pole-szanse-${esc(s.id)}-${field}" data-patch="${esc(s.id)}" data-field="${field}"`;
 const statusSelect = (s) =>
   `<select class="sel status-sel" style="--c:${esc(status(s.status).kolor)}" ${patchAttr(s, 'status')} aria-label="Status">${statuses().map((x) => opt(x.id, x.nazwa, s.status)).join('')}</select>`;
 const prioSelect = (s) =>
@@ -355,6 +356,19 @@ function renderFrame(path) {
   $('me').innerHTML = u ? `${avatar(u.imie_nazwisko)}<span><b>${esc(u.imie_nazwisko)}</b><span class="muted xs">${esc(u.rola ?? '')}</span></span>` : '';
 }
 
+// Przerysowanie zabrałoby spod kursora to, czego użytkownik właśnie używa: wciśnięty przycisk albo odnośnik
+// (kliknięcie by przepadło), termin w trakcie pisania (zapisałaby się niedokończona data) i otwartą listę.
+// Wtedy render() czeka, a zaległy widok rysuje się po puszczeniu przycisku myszy albo po wyjściu z pola.
+const hold = { pressed: false, stale: false };
+function busy() {
+  if (hold.pressed || document.activeElement?.matches?.('input[type="date"][data-patch]')) return true;
+  try {
+    return !!document.querySelector('select:open'); // fokus może być już na pozycji listy, nie na samej liście
+  } catch {
+    return false; // przeglądarka bez :open
+  }
+}
+
 function render() {
   let path = location.pathname;
   try {
@@ -362,6 +376,12 @@ function render() {
   } catch {}
   path = path.replace(/(.)\/+$/, '$1');
   const same = path === state.path;
+  if (same && busy()) {
+    hold.stale = true;
+    return;
+  }
+  hold.stale = false;
+  delete document.activeElement?.dataset?.typing; // termin znika z ekranu w trakcie pisania: bez zapisu
   // Odświeżenie na żywo nie zabiera użytkownikowi fokusu ani przewinięcia panelu.
   const focus = document.activeElement?.id;
   const scrolls = new Map([...document.querySelectorAll('[data-scroll]')].map((el) => [el.dataset.scroll, el.scrollTop]));
@@ -472,9 +492,59 @@ document.addEventListener('click', (event) => {
   if (take) patchDeal(take.dataset.take, { zmiany: { uzytkownik: me() } });
 });
 
+// Zapis pola z ekranu. Termin to pełny dzień z lat 2000-2099 (jak w serwerze) albo puste pole (null).
+// Niepełna data albo rok spoza zakresu nie idzie do pliku: pole wraca do zapisanego terminu.
+// Zwraca true, gdy zmiana poszła do serwera.
+function saveField(el) {
+  if (el.type === 'date') {
+    if (el.validity.badInput || (el.value && !/^20\d{2}-\d{2}-\d{2}$/.test(el.value))) {
+      el.value = el.defaultValue;
+      toast('Nie zapisano terminu: wpisz pełną datę z lat 2000-2099.');
+      return false;
+    }
+    if (el.value === el.defaultValue) return false;
+  }
+  patchDeal(el.dataset.patch, { zmiany: { [el.dataset.field]: el.value || null } });
+  return true;
+}
+
+// Chrome zgłasza zmianę terminu po każdej cyfrze (rok „2” to już data 0002-10-28), a zapis przerysowuje ekran.
+// Dlatego termin wpisywany z klawiatury zapisujemy po wyjściu z pola albo po Enterze. Wybór z kalendarza od razu.
 document.addEventListener('change', (event) => {
   const el = event.target.closest('[data-patch]');
-  if (el) patchDeal(el.dataset.patch, { zmiany: { [el.dataset.field]: el.value || null } });
+  if (el && !el.dataset.typing) saveField(el);
+});
+
+document.addEventListener('keydown', (event) => {
+  const el = event.target;
+  if (!el.matches('input[type="date"][data-patch]')) return;
+  if (event.key === 'Enter') el.blur();
+  else if (/^(\d|Backspace|Delete|ArrowUp|ArrowDown)$/.test(event.key)) el.dataset.typing = '1';
+});
+
+// Wciśnięty przycisk myszy wstrzymuje przerysowanie (busy). Zaległy widok rysujemy po puszczeniu, już po obsłudze `click`.
+// Ruch myszy bez wciśniętego przycisku też kończy wstrzymanie, gdyby przeglądarka nie zgłosiła puszczenia.
+const flush = () => setTimeout(() => hold.stale && render(), 0);
+document.addEventListener('pointerdown', (event) => {
+  if (event.button === 0) hold.pressed = true;
+});
+for (const type of ['pointerup', 'pointercancel', 'pointermove']) {
+  document.addEventListener(type, (event) => {
+    if (!hold.pressed || (type === 'pointermove' && event.buttons)) return;
+    hold.pressed = false;
+    flush();
+  });
+}
+
+// Termin wpisany z klawiatury zapisuje się od razu przy wyjściu z pola, także kliknięciem. Czeka tylko przerysowanie.
+document.addEventListener('focusout', (event) => {
+  const el = event.target;
+  if (el.dataset?.typing) {
+    if (!document.hasFocus()) return; // okno straciło fokus w trakcie pisania (Cmd+Tab): zapis przy wyjściu z pola po powrocie
+    delete el.dataset.typing;
+    if (saveField(el)) return; // ekran przerysuje odpowiedź serwera
+  }
+  flush(); // np. po zamknięciu listy albo terminie bez zmiany
 });
 
 document.addEventListener('input', (event) => {

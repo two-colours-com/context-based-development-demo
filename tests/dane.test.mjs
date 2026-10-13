@@ -72,6 +72,7 @@ test('szanse: status z demo.json, poprawne pola i daty', () => {
     assert.ok([null, 'wysoki', 'sredni', 'niski'].includes(rec.priorytet), `${id}: priorytet to wysoki, sredni, niski albo null`);
     assert.ok(rec.wartosc === null || (Number.isInteger(rec.wartosc) && rec.wartosc >= 0), `${id}: wartość to złote netto, liczba całkowita albo null`);
     assert.ok(rec.data === null || DAY.test(rec.data), `${id}: termin w formacie RRRR-MM-DD`);
+    assert.ok(rec.data === null || /^20\d{2}-/.test(rec.data), `${id}: termin z lat 2000-2099 (tylko taki przyjmuje serwer)`);
     assert.match(rec.utworzono, DAY, `${id}: utworzono w formacie RRRR-MM-DD`);
     assert.ok(Array.isArray(rec.historia) && rec.historia.length, `${id}: historia ma co najmniej jeden wpis`);
     for (const h of rec.historia) {

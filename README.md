@@ -4,6 +4,14 @@ Prototyp aplikacji sprzedażowej dla fikcyjnej stolarni z Krakowa. Powstał na w
 
 Bazą są zwykłe pliki JSON w katalogu `data/`. Ekran w przeglądarce i agent AI (Claude Code, Codex) pracują na tych samych plikach. Agent zmienia plik, a ekran pokazuje zmianę w niecałą sekundę: rekord miga i pojawia się krótki komunikat.
 
+## Punkt startowy i rozwiązanie wzorcowe
+
+Gałąź `main` to punkt startowy z pokazu: prosty Brain na plikach JSON i zatwierdzony plan kolejnej zmiany „Projekty klienta z zadaniami” w [`doc/plans/projekty-klienta/plan.md`](doc/plans/projekty-klienta/plan.md).
+
+Plan możesz wdrożyć z agentem: otwórz katalog w Claude Code albo Codex, uruchom skill `/code-manager` i napisz, że wdrażacie plan `projekty-klienta`. Manager prowadzi zmianę od planu do merge i zatrzymuje się w czterech miejscach, w których decydujesz Ty. Opis skilli: [`.agents/skills/README.md`](.agents/skills/README.md). Możesz też rozwijać Brain po swojemu.
+
+Gotowe rozwiązanie wzorcowe, do porównania z Twoim, jest na gałęzi `feat/projekty-klienta`: kod, kronika decyzji, wynik bramki (testy i checklista do klikania) i raport przeglądu kodu. Code-manager nazwie Twoją gałąź tak samo, więc wzorzec znajdziesz wtedy pod `origin/feat/projekty-klienta`.
+
 ## Co jest w środku
 
 - **Na dziś**: moje sprawy z terminem na dziś i zaległe, przyszłe i nieprzypisane. Status, priorytet, termin i opiekuna zmieniasz w wierszu.
