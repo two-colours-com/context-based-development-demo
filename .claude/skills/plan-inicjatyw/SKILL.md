@@ -1,9 +1,9 @@
 ---
-name: plan-zmiany
-description: 'Zamienia ustalenia z /grill w plan zmiany doc/plans/<slug>/plan.md, napisany językiem produktu: problem, co zobaczysz, zakres, model danych, etapy z kryteriami „działa, jeśli…”, scenariusze testów i pytania kontrolne. Dopisuje zmianę do doc/backlog.md. Nie pisze kodu. Triggery: „napisz plan”, „zaplanuj zmianę”, „rozpisz to na etapy”, „plan zmiany”, „zapisz plan”, „przejdźmy do planu”.'
+name: plan-inicjatyw
+description: 'Zamienia ustalenia z /grill w plan zmiany w aplikacji albo nowej inicjatywy, napisany językiem produktu, w doc/plans/<slug>/plan.md: problem, co zobaczysz, zakres, model danych, etapy z kryteriami „działa, jeśli…”, scenariusze testów i pytania kontrolne. Dopisuje plan do doc/backlog.md. Nie pisze kodu. Triggery: „napisz plan”, „zaplanuj zmianę”, „rozpisz to na etapy”, „plan zmiany”, „plan inicjatywy”, „nowa inicjatywa”, „zaplanuj inicjatywę”, „zapisz plan”, „przejdźmy do planu”.'
 ---
 
-# Plan: ustalenia zamienione w umowę
+# Plan inicjatywy: ustalenia zamienione w umowę
 
 Plan jest umową między użytkownikiem a wykonawcą. Użytkownik musi z niego wyczytać, co zobaczy w aplikacji. Wykonawca musi z niego wyczytać, co zbudować i po czym pozna, że skończył.
 

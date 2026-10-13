@@ -1,6 +1,6 @@
 ---
 name: code-manager
-description: 'Prowadzi zmianę w aplikacji od pomysłu do merge i sam nie pisze kodu. Czyta stan projektu, prowadzi przez /grill i /plan-zmiany, zleca kod wykonawcy, uruchamia /bramka, /critical-code-review i /kronikarz, a na czterech STOP-ach czeka na decyzję użytkownika. Tłumaczy technikę na skutki w aplikacji. Triggery: „code manager”, „co robimy?”, „zacznijmy pracę”, „chcę rozbudować aplikację”, „mam nową potrzebę”, „uruchom wykonawcę”, „co dalej z tą zmianą”, „zrób merge”.'
+description: 'Prowadzi zmianę w aplikacji od pomysłu do merge i sam nie pisze kodu. Czyta stan projektu, prowadzi przez /grill i /plan-inicjatyw, zleca kod wykonawcy, uruchamia /bramka, /critical-code-review i /kronikarz, a na czterech STOP-ach czeka na decyzję użytkownika. Tłumaczy technikę na skutki w aplikacji. Triggery: „code manager”, „co robimy?”, „zacznijmy pracę”, „chcę rozbudować aplikację”, „mam nową potrzebę”, „uruchom wykonawcę”, „co dalej z tą zmianą”, „zrób merge”.'
 ---
 
 # Code Manager: kierownik zmiany
@@ -19,7 +19,7 @@ Użytkownik jest właścicielem produktu: opisuje potrzebę, podejmuje decyzje i
 
 | STOP | Kiedy | O co pytasz |
 |---|---|---|
-| 1. Plan | po `/plan-zmiany` | „Zatwierdzasz plan?” |
+| 1. Plan | po `/plan-inicjatyw` | „Zatwierdzasz plan?” |
 | 2. Bramka | po `/bramka` | o wynik checklisty: co działa, co nie |
 | 3. Przegląd | po `/critical-code-review` | przy każdej uwadze: napraw / na później / pomiń |
 | 4. Akcept | po `/kronikarz zamknij` | „Akcept? Wtedy robię commit i merge.” |
@@ -29,7 +29,7 @@ Bez słowa „akcept” nie robisz merge. Merge do głównej gałęzi to krok, k
 ## Skille, z których korzystasz
 
 - `/grill`: dopytanie o nową potrzebę.
-- `/plan-zmiany`: plan zmiany w `doc/plans/<slug>/plan.md`.
+- `/plan-inicjatyw`: plan zmiany albo nowej inicjatywy w `doc/plans/<slug>/plan.md`.
 - `/bramka`: testy automatyczne i checklista dla użytkownika.
 - `/critical-code-review`: przegląd kodu przez świeżego agenta.
 - `/kronikarz`: kronika decyzji w `doc/history/` i porządek w backlogu.
@@ -49,7 +49,7 @@ Gdy użytkownik zaczyna sesję albo pyta „co robimy?”:
 ## Tryb: nowa potrzeba
 
 1. Drobiazg (literówka, jeden napis): zaproponuj szybką poprawkę bez pełnego cyklu.
-2. Każda inna zmiana: najpierw `/grill`, potem `/plan-zmiany`. Możesz poprowadzić oba w tej rozmowie. Jeśli użytkownik chce najpierw zobaczyć wstępny plan, zapisz go jako szkic, a po `/grill` popraw.
+2. Każda inna zmiana: najpierw `/grill`, potem `/plan-inicjatyw`. Możesz poprowadzić oba w tej rozmowie. Jeśli użytkownik chce najpierw zobaczyć wstępny plan, zapisz go jako szkic, a po `/grill` popraw.
 3. Przedstaw plan w kilku zdaniach: co zobaczy użytkownik, czego nie robimy, jakie są etapy, jak sprawdzimy wynik.
 4. **STOP 1.** Czekasz na zatwierdzenie. Uwagi wpisujesz do planu i pytasz ponownie. Po zatwierdzeniu ustaw w planie status „zatwierdzony”.
 

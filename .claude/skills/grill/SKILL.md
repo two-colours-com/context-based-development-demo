@@ -1,6 +1,6 @@
 ---
 name: grill
-description: 'Dopytuje o planowaną zmianę w aplikacji, po jednym pytaniu, zawsze z rekomendowaną odpowiedzią. Na bieżąco uzupełnia słownik CONTEXT.md, a ważne decyzje zapisuje w doc/decisions/. Używaj przed /plan-zmiany, gdy pomysł jest jeszcze ogólny. Triggery: „grill”, „przegrilluj mnie”, „dopytaj mnie”, „doprecyzuj zmianę”, „przesłuchaj pomysł”, „mam pomysł na funkcję”, „zanim zaplanujemy”.'
+description: 'Dopytuje o planowaną zmianę w aplikacji, po jednym pytaniu, zawsze z rekomendowaną odpowiedzią. Na bieżąco uzupełnia słownik CONTEXT.md, a ważne decyzje zapisuje w doc/decisions/. Używaj przed /plan-inicjatyw, gdy pomysł jest jeszcze ogólny. Triggery: „grill”, „przegrilluj mnie”, „dopytaj mnie”, „doprecyzuj zmianę”, „przesłuchaj pomysł”, „mam pomysł na funkcję”, „zanim zaplanujemy”.'
 ---
 
 # Grill: dopytaj, zanim powstanie plan
@@ -10,7 +10,7 @@ Jedno zdanie użytkownika często kryje kilka decyzji, których nikt nie wypowie
 ## Kiedy używać
 
 - Użytkownik ma pomysł na zmianę, ale nie wiadomo jeszcze, jak ma działać w szczegółach.
-- Przed `/plan-zmiany`. Przy drobiazgu (literówka, napis na przycisku) grill nie jest potrzebny.
+- Przed `/plan-inicjatyw`. Przy drobiazgu (literówka, napis na przycisku) grill nie jest potrzebny.
 
 ## Krok po kroku
 
@@ -64,11 +64,11 @@ Zwykłe, łatwe do zmiany wybory nie potrzebują osobnego pliku. Wystarczy wpis 
 
 Kończysz, gdy umiesz opisać zmianę w kilku zdaniach bez dziur, padły co najmniej 3 pytania, które coś doprecyzowały, a nowe pojęcia są w `CONTEXT.md`. Nie przeciągaj sesji „na wszelki wypadek”.
 
-Na koniec wypisz ustalenia: co robimy, czego nie robimy, które rekomendacje przyjęliście, a które użytkownik zmienił. Zakończ zdaniem: „Mamy wspólny obraz. Przejdźmy do `/plan-zmiany`.”
+Na koniec wypisz ustalenia: co robimy, czego nie robimy, które rekomendacje przyjęliście, a które użytkownik zmienił. Zakończ zdaniem: „Mamy wspólny obraz. Przejdźmy do `/plan-inicjatyw`.”
 
 ## Czego nie robisz
 
 - Nie zadajesz kilku pytań naraz.
-- Nie piszesz kodu ani planu. Plan to zadanie `/plan-zmiany`.
+- Nie piszesz kodu ani planu. Plan to zadanie `/plan-inicjatyw`.
 - Nie przyjmujesz założeń po cichu. Każde założenie zamieniasz w pytanie z rekomendacją.
 - Nie wpisujesz do `CONTEXT.md` szczegółów technicznych.
