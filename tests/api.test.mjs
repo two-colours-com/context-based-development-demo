@@ -218,6 +218,7 @@ describe('Etap 2: zmiana zadania z ekranu, aktywność i „Na dziś”', () => 
       [{ zmiany: { status: 'zamowienie' } }, 400],
       [{ zmiany: { uzytkownik: 'ktos' } }, 400],
       [{ zmiany: { data: '2026-02-30' } }, 400],
+      [{ zmiany: { constructor: 'x' } }, 400],
       [{ autor: 'obcy', komentarz: 'x' }, 400],
     ];
     for (const [body, code] of cases) assert.equal((await patchTask('010.1-02', body)).status, code, JSON.stringify(body));
@@ -271,6 +272,7 @@ describe('Etap 3: projekt z wygranej szansy', () => {
   test('zamówienie SL-014 zakłada 002.1 z nazwą i opiekunem szansy oraz trzema zadaniami z szablonu bez terminów', async () => {
     const p = await call('PATCH', '/api/szanse/SL-014', { autor: 'dawid', zmiany: { status: 'zamowienie' } });
     assert.equal(p.status, 200, p.text);
+    assert.equal(readRec('szanse/SL-014.json').historia.at(-1).status, 'zamowienie', 'zmiana statusu szansy dopisuje wpis w historii');
     const r = await createProject('SL-014');
     assert.equal(r.status, 201, r.text);
     assert.equal(r.json.projekt, '002.1');
@@ -332,10 +334,91 @@ describe('Etap 3: projekt z wygranej szansy', () => {
     assert.deepEqual(list('projekty').filter((id) => id.startsWith('007.')), ['007.1']);
   });
 
+  test('drugi status z rolą „wygrana” też zakłada projekt, a odmowa wymienia oba', async () => {
+    const czesciowe = { id: 'zamowienie-czesciowe', nazwa: 'Zamówienie częściowe', kolor: '#0d9488', sekcja: 'zamkniete', rola: 'wygrana' };
+    write('demo.json', { ...DEMO, statusy: [...DEMO.statusy, czesciowe] });
+    try {
+      write('szanse/SL-031.json', deal('Szafa wnękowa', '001', 'zamowienie-czesciowe', 'marek'));
+      const r = await createProject('SL-031');
+      assert.equal(r.status, 201, r.text);
+      assert.equal(r.json.projekt, '001.2');
+      assert.deepEqual(r.json.zadania, ['001.2-01', '001.2-02', '001.2-03']);
+      write('szanse/SL-032.json', deal('Półki do spiżarni', '001', 'oferta', 'marek'));
+      const o = await createProject('SL-032');
+      assert.equal(o.status, 409);
+      assert.match(o.json.blad, /„Zamówienie” albo „Zamówienie częściowe”/);
+    } finally {
+      write('demo.json', DEMO);
+    }
+  });
+
+  test('bez szablonu zadań (brak pola albo null) projekt powstaje bez zadań, a szablon z błędem dalej blokuje', async () => {
+    const { szablon_zadan: _, ...bezSzablonu } = DEMO;
+    write('szanse/SL-033.json', deal('Regał do salonu', '010', 'zamowienie', 'marek'));
+    try {
+      write('demo.json', { ...DEMO, szablon_zadan: 'Pomiar końcowy' });
+      const zly = await createProject('SL-033');
+      assert.equal(zly.status, 409);
+      assert.match(zly.json.blad, /Szablon zadań w demo\.json ma błąd/);
+
+      write('demo.json', bezSzablonu);
+      const r = await createProject('SL-033');
+      assert.equal(r.status, 201, r.text);
+      assert.equal(r.json.projekt, '010.2');
+      assert.deepEqual(r.json.zadania, []);
+      assert.equal(readRec('projekty/010.2.json').szansa, 'SL-033');
+      assert.deepEqual(list('zadania').filter((id) => id.startsWith('010.2-')), []);
+
+      write('szanse/SL-034.json', deal('Biurko do pracowni', '010', 'zamowienie', 'marek'));
+      write('demo.json', { ...DEMO, szablon_zadan: null });
+      const n = await createProject('SL-034');
+      assert.equal(n.status, 201, n.text);
+      assert.equal(n.json.projekt, '010.3');
+      assert.deepEqual(n.json.zadania, []);
+      assert.equal(readRec('projekty/010.3.json').szansa, 'SL-034');
+      assert.deepEqual(list('zadania').filter((id) => id.startsWith('010.3-')), []);
+    } finally {
+      write('demo.json', DEMO);
+    }
+  });
+
   test('zapis tylko z aplikacji i tylko z poprawnym numerem szansy', async () => {
     assert.equal((await createProject('SL-022', { Origin: 'http://evil.example' })).status, 403);
     assert.equal((await createProject('../demo')).status, 400);
     assert.equal((await createProject(undefined)).status, 400);
     assert.equal((await createProject('SL-404')).status, 404);
+  });
+});
+
+/* ---- Poprawka z bramki ---- */
+
+describe('Poprawka z bramki: termin tylko z lat 2000-2099', () => {
+  // Chrome przy wpisywaniu roku z klawiatury oddaje po drodze 0002-10-28, 0020-10-28... (bramka 2.1).
+  test('termin 0020-10-28 zadania i szansy: 400 z komunikatem i plik bez zmian, a 2026-10-28 się zapisuje', async () => {
+    const records = {
+      'zadania/010.1-08.json': { projekt: '010.1', nazwa: 'Pomiar końcowy', status: 'do-zrobienia', uzytkownik: 'dawid', data: null, utworzono: '2026-10-28', aktywnosc: [] },
+      'szanse/SL-040.json': deal('Szafa wnękowa', '001', 'oferta', 'dawid'),
+    };
+    try {
+      for (const [rel, rec] of Object.entries(records)) {
+        write(rel, rec);
+        const path = `/api/${rel.slice(0, -5)}`;
+        const before = readFileSync(file(rel), 'utf-8');
+        for (const data of ['0020-10-28', '1999-12-31', '2100-01-01']) {
+          const r = await call('PATCH', path, { autor: 'dawid', zmiany: { data } });
+          assert.equal(r.status, 400, `${rel}: ${data}`);
+          assert.match(r.json.blad, /termin.*2000-2099/, `${rel}: komunikat mówi, jaki termin jest dobry`);
+        }
+        assert.equal(readFileSync(file(rel), 'utf-8'), before, `${rel}: odrzucony termin nie dotyka pliku`);
+
+        const ok = await call('PATCH', path, { autor: 'dawid', zmiany: { data: '2026-10-28' } });
+        assert.equal(ok.status, 200, ok.text);
+        const saved = readRec(rel);
+        assert.equal(saved.data, '2026-10-28');
+        assert.deepEqual(saved.aktywnosc.map((a) => a.zmiany), [[{ pole: 'data', przed: rec.data, po: '2026-10-28' }]], `${rel}: jeden wpis w aktywności`);
+      }
+    } finally {
+      for (const rel of Object.keys(records)) rmSync(file(rel), { force: true });
+    }
   });
 });

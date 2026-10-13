@@ -1,6 +1,6 @@
 # Projekty klienta z zadaniami
 
-**Slug:** `projekty-klienta` · **Data:** 2026-10-28 · **Status:** zatwierdzony
+**Slug:** `projekty-klienta` · **Data:** 2026-10-28 · **Status:** zrobione
 
 ## Problem
 Szansa kończy się zamówieniem i na tym Brain się urywa. Widzę organizację 002, ale nie widzę,

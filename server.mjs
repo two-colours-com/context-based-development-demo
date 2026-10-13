@@ -104,7 +104,10 @@ function rewrite(file, change) {
 /* ---- Zmiana szansy albo zadania z ekranu: biała lista pól, każda zmiana zostawia ślad w aktywności ---- */
 
 const PRIORITIES = ['wysoki', 'sredni', 'niski'];
-const validDay = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) && new Date(Date.parse(`${v}T00:00:00Z`) || 0).toISOString().slice(0, 10) === v;
+// Dzień z kalendarza z lat 2000-2099. Przy wpisywaniu roku z klawiatury przeglądarka oddaje po drodze 0002-10-28,
+// 0020-10-28 itd. Taki rok to niedokończone pole albo literówka, a nie termin.
+const validDay = (v) => typeof v === 'string' && /^20\d{2}-\d{2}-\d{2}$/.test(v) && new Date(Date.parse(`${v}T00:00:00Z`) || 0).toISOString().slice(0, 10) === v;
+const DAY_ERROR = 'Niepoprawny termin: podaj dzień z lat 2000-2099 w formacie RRRR-MM-DD, np. 2026-10-28.';
 const isObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 const statusList = (demo, key) => (Array.isArray(demo?.[key]) ? demo[key] : []);
 
@@ -144,7 +147,7 @@ async function patchRecord(col, id, body) {
   const checks = kind.checks(demo, isUser);
   for (const [key, value] of Object.entries(zmiany)) {
     if (!Object.hasOwn(checks, key)) throw new ApiError(400, `Pola „${key}” nie zmienia się z ekranu.`);
-    if (!checks[key](value)) throw new ApiError(400, `Niepoprawna wartość pola „${key}”.`);
+    if (!checks[key](value)) throw new ApiError(400, key === 'data' ? DAY_ERROR : `Niepoprawna wartość pola „${key}”.`);
   }
   const komentarz = typeof body.komentarz === 'string' ? body.komentarz.trim().slice(0, 5000) : '';
 
@@ -216,11 +219,16 @@ async function createProjectNow(body) {
   if (typeof dealId !== 'string' || !/^SL-\d{3,}$/.test(dealId)) throw new ApiError(400, 'Podaj numer szansy, np. SL-014.');
   const [demo, deal] = await Promise.all([readJson(join(DATA, 'demo.json')), readJson(join(DATA, 'szanse', `${dealId}.json`))]);
   if (!isObject(deal)) throw new SyntaxError();
-  const won = statusList(demo, 'statusy').find((s) => s.rola === 'wygrana');
-  if (!won || deal.status !== won.id) throw new ApiError(409, `Projekt zakłada się z szansy w statusie „${won?.nazwa ?? 'wygrana'}”.`);
+  // Wygrana to każdy status z rolą „wygrana”, tak jak na ekranie (przycisk „Załóż projekt”).
+  const statusy = statusList(demo, 'statusy');
+  if (statusy.find((s) => s.id === deal.status)?.rola !== 'wygrana') {
+    const wins = statusy.filter((s) => s.rola === 'wygrana').map((s) => `„${s.nazwa ?? s.id}”`);
+    throw new ApiError(409, `Projekt zakłada się z szansy w statusie ${wins.join(' albo ') || '„wygrana”'}.`);
+  }
   const orgId = deal.organizacja;
   if (typeof orgId !== 'string' || !/^\d{3}$/.test(orgId)) throw new ApiError(409, `Szansa ${dealId} nie ma poprawnej organizacji.`);
-  const template = demo.szablon_zadan;
+  // Brak szablonu (albo null) = projekt bez zadań, jak obiecuje ekran. Szablon z błędem to błąd.
+  const template = demo.szablon_zadan ?? [];
   if (!Array.isArray(template) || !template.every((n) => typeof n === 'string' && n.trim())) throw new ApiError(409, 'Szablon zadań w demo.json ma błąd.');
   const projectStatus = statusList(demo, 'statusy_projektow')[0]?.id;
   const taskStatus = statusList(demo, 'statusy_zadan')[0]?.id;

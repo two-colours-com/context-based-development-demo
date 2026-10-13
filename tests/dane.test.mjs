@@ -77,6 +77,7 @@ test('szanse: status z demo.json, poprawne pola i daty', () => {
     assert.ok([null, 'wysoki', 'sredni', 'niski'].includes(rec.priorytet), `${id}: priorytet to wysoki, sredni, niski albo null`);
     assert.ok(rec.wartosc === null || (Number.isInteger(rec.wartosc) && rec.wartosc >= 0), `${id}: wartość to złote netto, liczba całkowita albo null`);
     assert.ok(rec.data === null || DAY.test(rec.data), `${id}: termin w formacie RRRR-MM-DD`);
+    assert.ok(rec.data === null || /^20\d{2}-/.test(rec.data), `${id}: termin z lat 2000-2099 (tylko taki przyjmuje serwer)`);
     assert.match(rec.utworzono, DAY, `${id}: utworzono w formacie RRRR-MM-DD`);
     assert.ok(Array.isArray(rec.historia) && rec.historia.length, `${id}: historia ma co najmniej jeden wpis`);
     for (const h of rec.historia) {
@@ -138,7 +139,7 @@ test('demo.json: statusy projektów i zadań z kolorami oraz szablon zadań', ()
   }
   assert.deepEqual(demo.statusy_projektow.map((s) => s.id), ['w-toku', 'zakonczony']);
   assert.deepEqual(demo.statusy_zadan.map((s) => s.id), ['do-zrobienia', 'w-toku', 'zrobione']);
-  assert.ok(Array.isArray(demo.szablon_zadan) && demo.szablon_zadan.every((n) => typeof n === 'string' && n.trim()), 'demo.json: szablon_zadan to lista nazw zadań');
+  assert.ok(Array.isArray(demo.szablon_zadan) && demo.szablon_zadan.every((n) => typeof n === 'string' && n.trim()), 'demo.json: szablon_zadan to lista nazw zadań. Projekt bez zadań to pusta lista [], pola nie usuwaj');
 });
 
 test('projekty: numer od klienta, odnośniki do organizacji, szansy i opiekuna, status z demo.json', () => {
@@ -178,6 +179,7 @@ test('zadania: numer od projektu, odnośniki do projektu i osoby, status z demo.
     assert.ok(statusIds.has(rec.status), `zadania/${id}.json: status „${rec.status}” nie istnieje w statusy_zadan`);
     assert.ok(rec.uzytkownik === null || userIds.has(rec.uzytkownik), `zadania/${id}.json: osoba „${rec.uzytkownik}” nie istnieje`);
     assert.ok(rec.data === null || DAY.test(rec.data), `zadania/${id}.json: termin w formacie RRRR-MM-DD albo null`);
+    assert.ok(rec.data === null || /^20\d{2}-/.test(rec.data), `zadania/${id}.json: termin z lat 2000-2099 (tylko taki przyjmuje serwer)`);
     assert.match(rec.utworzono, DAY, `zadania/${id}.json: utworzono w formacie RRRR-MM-DD`);
     assert.ok(Array.isArray(rec.aktywnosc), `zadania/${id}.json: aktywnosc to lista (może być pusta)`);
     for (const a of rec.aktywnosc) {

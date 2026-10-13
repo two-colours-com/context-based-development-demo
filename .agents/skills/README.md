@@ -42,13 +42,13 @@ Trzymamy kopię zamiast skrótu (symlinku), bo skróty źle działają na Window
 macOS / Linux:
 
 ```bash
-for s in grill plan code-manager bramka critical-code-review kronikarz handoff; do cp -R ".agents/skills/$s" .claude/skills/; done
+for s in grill plan-zmiany code-manager bramka critical-code-review kronikarz handoff; do cp -R ".agents/skills/$s" .claude/skills/; done
 ```
 
 Windows (PowerShell):
 
 ```powershell
-"grill","plan","code-manager","bramka","critical-code-review","kronikarz","handoff" | ForEach-Object { Copy-Item -Recurse -Force ".agents/skills/$_" ".claude/skills/" }
+"grill","plan-zmiany","code-manager","bramka","critical-code-review","kronikarz","handoff" | ForEach-Object { Copy-Item -Recurse -Force ".agents/skills/$_" ".claude/skills/" }
 ```
 
 ## Instalacja globalna
@@ -62,7 +62,7 @@ macOS / Linux:
 
 ```bash
 mkdir -p ~/.claude/skills ~/.agents/skills
-for s in grill plan code-manager bramka critical-code-review kronikarz handoff; do
+for s in grill plan-zmiany code-manager bramka critical-code-review kronikarz handoff; do
   cp -R ".agents/skills/$s" ~/.claude/skills/
   cp -R ".agents/skills/$s" ~/.agents/skills/
 done
@@ -84,7 +84,7 @@ Claude Code ma wbudowaną komendę `/plan` (tryb planowania). Żeby się nie gry
 CONTEXT.md                               słownik firmy (grill)
 doc/decisions/NNNN-<opis>.md             ważne decyzje (grill)
 doc/plans/<slug>/plan.md                 plan zmiany (plan-zmiany)
-doc/backlog.md                           lista zadań (plan, kronikarz)
+doc/backlog.md                           lista zadań (plan-zmiany, kronikarz)
 doc/history/YYYY-MM-DD-<slug>.md         kronika zmiany (kronikarz)
 doc/bramki/YYYY-MM-DD-<slug>.md          checklista testów (bramka)
 doc/code-reviews/YYYY-MM-DD-<slug>.md    raport przeglądu (critical-code-review)

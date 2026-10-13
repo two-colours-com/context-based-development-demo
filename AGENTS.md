@@ -65,6 +65,8 @@ Projekty i zadania mają własne listy statusów w tym samym formacie (`id`, `na
 }
 ```
 
+Pusta lista `[]` to nowy projekt bez zadań. Pola nie usuwaj.
+
 - Status w sekcji `zamkniete` kończy sprawę: projekt trafia do „Zakończone”, zadanie liczy się jako zrobione i znika z „Na dziś”.
 - Nowy projekt dostaje pierwszy status z `statusy_projektow`, a jego zadania pierwszy status z `statusy_zadan`.
 
